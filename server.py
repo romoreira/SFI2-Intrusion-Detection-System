@@ -23,16 +23,19 @@ from torch.utils.data import Dataset
 import pandas as pd
 
 
+
 #CNN de Teste para o problema binário
 class SimpleNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super(SimpleNN, self).__init__()
+        #self.lstm = nn.LSTM(input_size, hidden_size, num_layers=16, batch_first=True)
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, output_size)
         self.sigmoid = nn.Sigmoid()  # Sigmoid activation for binary classification
 
     def forward(self, x):
+        #x = self.lstm(x)
         x = self.fc1(x)
         x = self.relu(x)
         x = self.fc2(x)
@@ -162,7 +165,7 @@ def select_model(name):
     if name == 'Basic':
         # Set hyperparameters
         input_size = 49  # Number of features in your dataset
-        hidden_size = 128  # Number of neurons in the hidden layer
+        hidden_size = 1024  # Number of neurons in the hidden layer
         output_size = 2  # 1 for binary classification
 
         # Initialize the model
@@ -242,7 +245,7 @@ if __name__ == "__main__":
     model = select_model('Basic')
 
 
-    handler = AsyncServerHandler(model, global_round=10)
+    handler = AsyncServerHandler(model, global_round=50)
     handler.setup_optim(args.lr)
 
     network = DistNetwork(address=(args.ip, args.port),
