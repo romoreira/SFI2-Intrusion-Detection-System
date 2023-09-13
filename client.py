@@ -21,6 +21,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset
 
+
 #CNN de Teste para o problema binário
 class SimpleNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -50,9 +51,11 @@ class CustomDataset(Dataset):
         y_sample = self.y[idx]
         return x_sample, y_sample
 
-def evaluate_model(val_loader, model):
+def evaluate_model(val_loader, model, client_id):
     total = 0
     correct = 0
+    real_labels = []  # Lista para armazenar os rótulos verdadeiros
+    predicted_labels = []  # Lista para armazenar os rótulos previstos
 
     with torch.no_grad():
         model.eval()
@@ -63,8 +66,16 @@ def evaluate_model(val_loader, model):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
+            # Adicione os rótulos verdadeiros e previstos às listas
+            real_labels.extend(labels.cpu().numpy())
+            predicted_labels.extend(predicted.cpu().numpy())
+
     accuracy = correct / total
-    print(f'Acurácia no conjunto de validação: {100 * accuracy:.2f}%')
+    print(f'Client: '+str(client_id)+f' com Acurácia no conjunto de validação: {100 * accuracy:.2f}%')
+
+    # Agora, você pode imprimir os rótulos verdadeiros e previstos
+    #print("Rótulos Verdadeiros:", real_labels)
+    #print("Rótulos Previstos:", predicted_labels)
 
 def create_loaders(X_train, X_test, y_train, y_test):
     #print("\n")
@@ -154,7 +165,7 @@ def select_model(name):
     if name == 'Basic':
         # Set hyperparameters
         input_size = 49  # Number of features in your dataset
-        hidden_size = 64  # Number of neurons in the hidden layer
+        hidden_size = 256  # Number of neurons in the hidden layer
         output_size = 2  # 1 for binary classification
 
         # Initialize the model
@@ -212,8 +223,8 @@ def select_model(name):
         return model_ft
 
 class AsyncTrainer(SGDClientTrainer):
-    def __init__(self,criterion, logger=True):
-        super().__init__(criterion, logger)
+    def __init__(self, model, criterion):
+        super().__init__(model, criterion)
         self.time = 0
 
     @property
@@ -254,8 +265,8 @@ train_loader, val_loader = create_loaders(X_train, X_test, y_train, y_test)
 
 print("Client: "+str(args.rank)+" training with dataset: "+str(args.dataset_id))
 
-criterion = nn.CrossEntropyLoss()
-trainer = AsyncTrainer(model, cuda=args.cuda, criterion=criterion)
+criterion = nn.BCELoss()
+trainer = AsyncTrainer(model, criterion)
 
 
 dataset = train_loader
@@ -269,3 +280,4 @@ network = DistNetwork(address=(args.ip, args.port),
 
 Manager = ActiveClientManager(trainer=trainer, network=network)
 Manager.run()
+evaluate_model(val_loader, model, int(args.rank))
