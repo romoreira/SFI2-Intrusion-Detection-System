@@ -22,6 +22,7 @@ from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset
 
 
+
 #CNN de Teste para o problema binário
 class SimpleNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -144,7 +145,8 @@ def load_dataset(dataset_id):
     y = df['NST_B_Label']
 
     # Dividir os dados em conjuntos de treinamento e teste
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     # Padronizar os recursos (opcional, mas geralmente recomendado)
     scaler = StandardScaler()
@@ -165,7 +167,7 @@ def select_model(name):
     if name == 'Basic':
         # Set hyperparameters
         input_size = 49  # Number of features in your dataset
-        hidden_size = 256  # Number of neurons in the hidden layer
+        hidden_size = 128  # Number of neurons in the hidden layer
         output_size = 2  # 1 for binary classification
 
         # Initialize the model
