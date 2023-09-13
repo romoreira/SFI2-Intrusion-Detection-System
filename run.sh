@@ -1,17 +1,7 @@
 #!/bin/bash
-set -e
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"/
 
-echo "Starting server"
-python server.py &
-sleep 3  # Sleep for 3s to give the server enough time to start
 
-for i in `seq 0 1`; do
-    echo "Starting client $i"
-    python client.py &
-done
+python server.py --world_size 3 --dataset_id 2&
 
-# Enable CTRL+C to stop all background processes
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM
-# Wait for all background processes to complete
-wait
+python client.py --world_size 3 --rank 1 --epoch 100 --dataset_id 1 --batch_size 32 --lr 0.001 &
+python client.py --world_size 3 --rank 2 --epoch 100 --dataset_id 1 --batch_size 32 --lr 0.001 &
