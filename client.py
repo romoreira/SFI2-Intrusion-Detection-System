@@ -20,7 +20,12 @@ from torch.utils.data import DataLoader, random_split
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset
-
+from fedlab.utils.serialization import SerializationTool
+from fedlab.utils.aggregator import Aggregators
+from tqdm import trange
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import numpy as np
 
 #CNN de Teste para o problema binário
 class SimpleNN(nn.Module):
@@ -168,78 +173,89 @@ def select_model(name):
     if name == 'Basic':
         # Set hyperparameters
         input_size = 49  # Number of features in your dataset
-        hidden_size = 1024  # Number of neurons in the hidden layer
+        hidden_size = 64  # Number of neurons in the hidden layer
         output_size = 2  # 1 for binary classification
 
         # Initialize the model
         model = SimpleNN(input_size, hidden_size, output_size)
         return model
 
-    # ShuffleNet
-    if name == 'ShuffleNet':
-        model_ft = models.shufflenet_v2_x1_0(pretrained=True)
-        # Congele todos os parâmetros do modelo (ou deixe-os descongelados, dependendo de sua escolha)
-        for param in model_ft.parameters():
-            param.requires_grad = True  # Defina como False para congelar
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, 2)
-        input_size = 224
-        return model_ft
 
-    elif name == 'AlexNet':
-        ###AlexNet###
-        feature_extract = True
-        model_ft = models.alexnet(pretrained=True)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier[6].in_features
-        model_ft.classifier[6] = nn.Linear(num_ftrs, 4)
-        input_size = 224
-        return model_ft
 
-    elif name == 'Resnet18':
-        ###Resnet18###
-        feature_extract = True
-        model_ft = models.resnet18(pretrained=True)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, 4)
-        input_size = 224
-
-    elif name == 'SqueezeNet':
-        ###SqueezeNet###
-        model_ft = models.squeezenet1_0(pretrained=True)
-        set_parameter_requires_grad(model_ft, True)
-        model_ft.classifier[1] = nn.Conv2d(512, 4, kernel_size=(1, 1), stride=(1, 1))
-        model_ft.num_classes = 4
-        input_size = 224
-        return model_ft
-
-    elif name == 'VGG11_b':
-        ###VGG11_b###
-        use_pretrained = True
-        feature_extract = True
-        model_ft = models.vgg11_bn(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier[6].in_features
-        model_ft.classifier[6] = nn.Linear(num_ftrs, 4)
-        input_size = 224
-        return model_ft
-
-class AsyncTrainer(SGDClientTrainer):
+class FedAvgClientTrainer(SGDClientTrainer):
     def __init__(self, model, criterion):
         super().__init__(model, criterion)
         self.time = 0
+        #self.round = 0
 
     @property
     def uplink_package(self):
         return [self.model_parameters, self.round]
 
+
     def local_process(self, payload, id):
         model_parameters = payload[0]
-        self.round = payload[1]
+        self.round = payload[0]
         #train_loader = self.dataset.get_dataloader(id, self.batch_size)
         train_loader = self.dataset
         self.train(model_parameters, train_loader)
+
+    def train(self, model_parameters, train_loader):
+        """Client trains its local model on local dataset.
+
+        Args:
+            model_parameters (torch.Tensor): Serialized model parameters.
+        """
+        SerializationTool.deserialize_model(self._model, model_parameters)  # load parameters
+        self._LOGGER.info("Local train procedure is running")
+
+        # Initialize a list to store loss values per epoch
+        epoch_loss_values = []
+
+        for ep in range(self.epochs):
+            self._model.train()
+            self._LOGGER.info("Client: " + str(args.rank) + f" Epoch {ep + 1}/{self.epochs}")
+
+            # Initialize loss for the epoch
+            epoch_loss = 0.0
+
+            # Create a progress bar for the inner loop (batches)
+            batch_iterator = tqdm(train_loader, desc='Training', leave=False)
+
+            for data, target in batch_iterator:
+                if self.cuda:
+                    data, target = data.cuda(self.device), target.cuda(self.device)
+
+                outputs = self._model(data)
+                loss = self.criterion(outputs, target)
+
+                self.optimizer.zero_grad()
+                loss.backward()
+                self.optimizer.step()
+
+                # Accumulate the loss for the epoch
+                epoch_loss += loss.item()
+
+                # Update the progress bar
+                batch_iterator.set_postfix({'Loss': loss.item()})
+
+            # Append the average loss for the epoch to the list
+            epoch_loss /= len(train_loader)
+            epoch_loss_values.append(epoch_loss)
+
+        self._LOGGER.info("Local train procedure is finished")
+
+        # Plot the loss curve by epoch with integer values on the x-axis
+        plt.figure(figsize=(10, 5))
+        x_ticks = np.arange(1, len(epoch_loss_values) + 1)  # Generate integer ticks
+        plt.plot(x_ticks, epoch_loss_values, label='Training Loss', linewidth=2.0)
+        plt.xlabel('Epochs', fontsize=13)
+        plt.ylabel('Loss', fontsize=13)
+        plt.title('Training Loss', fontsize=15)
+        plt.legend()
+        plt.xticks(x_ticks)
+        # plt.grid(True)
+        plt.savefig(str(args.rank) + "_training_loss.pdf")
 
 
 parser = argparse.ArgumentParser(description='Distbelief training example')
@@ -269,7 +285,7 @@ train_loader, val_loader = create_loaders(X_train, X_test, y_train, y_test)
 print("Client: "+str(args.rank)+" training with dataset: "+str(args.dataset_id))
 
 criterion = nn.BCELoss()
-trainer = AsyncTrainer(model, criterion)
+trainer = FedAvgClientTrainer(model, criterion)
 
 
 dataset = train_loader

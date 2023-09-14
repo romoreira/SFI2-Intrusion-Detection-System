@@ -21,7 +21,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset
 import pandas as pd
-
+from fedlab.contrib.algorithm.fedavg import FedAvgServerHandler
 
 
 #CNN de Teste para o problema binário
@@ -165,62 +165,14 @@ def select_model(name):
     if name == 'Basic':
         # Set hyperparameters
         input_size = 49  # Number of features in your dataset
-        hidden_size = 1024  # Number of neurons in the hidden layer
+        hidden_size = 64  # Number of neurons in the hidden layer
         output_size = 2  # 1 for binary classification
 
         # Initialize the model
         model = SimpleNN(input_size, hidden_size, output_size)
         return model
 
-    # ShuffleNet
-    if name == 'ShuffleNet':
-        model_ft = models.shufflenet_v2_x1_0(pretrained=True)
-        # Congele todos os parâmetros do modelo (ou deixe-os descongelados, dependendo de sua escolha)
-        for param in model_ft.parameters():
-            param.requires_grad = True  # Defina como False para congelar
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, 2)
-        input_size = 224
-        return model_ft
 
-    elif name == 'AlexNet':
-        ###AlexNet###
-        feature_extract = True
-        model_ft = models.alexnet(pretrained=True)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier[6].in_features
-        model_ft.classifier[6] = nn.Linear(num_ftrs, 4)
-        input_size = 224
-        return model_ft
-
-    elif name == 'Resnet18':
-        ###Resnet18###
-        feature_extract = True
-        model_ft = models.resnet18(pretrained=True)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, 4)
-        input_size = 224
-
-    elif name == 'SqueezeNet':
-        ###SqueezeNet###
-        model_ft = models.squeezenet1_0(pretrained=True)
-        set_parameter_requires_grad(model_ft, True)
-        model_ft.classifier[1] = nn.Conv2d(512, 4, kernel_size=(1,1), stride=(1,1))
-        model_ft.num_classes = 4
-        input_size = 224
-        return model_ft
-
-    elif name == 'VGG11_b':
-        ###VGG11_b###
-        use_pretrained = True
-        feature_extract = True
-        model_ft = models.vgg11_bn(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier[6].in_features
-        model_ft.classifier[6] = nn.Linear(num_ftrs, 4)
-        input_size = 224
-        return model_ft
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Distbelief training example')
@@ -244,9 +196,8 @@ if __name__ == "__main__":
 
     model = select_model('Basic')
 
+    handler = FedAvgServerHandler(model, global_round=2, sample_ratio=1.0)
 
-    handler = AsyncServerHandler(model, global_round=50)
-    handler.setup_optim(args.lr)
 
     network = DistNetwork(address=(args.ip, args.port),
                           world_size=args.world_size,
