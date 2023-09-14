@@ -165,7 +165,7 @@ def select_model(name):
     if name == 'Basic':
         # Set hyperparameters
         input_size = 49  # Number of features in your dataset
-        hidden_size = 64  # Number of neurons in the hidden layer
+        hidden_size = 32  # Number of neurons in the hidden layer
         output_size = 2  # 1 for binary classification
 
         # Initialize the model
