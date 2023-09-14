@@ -22,6 +22,7 @@ from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset
 import pandas as pd
 from fedlab.contrib.algorithm.fedavg import FedAvgServerHandler
+import matplotlib.pyplot as plt
 
 
 #CNN de Teste para o problema binário
@@ -160,6 +161,7 @@ def evaluate_model(val_loader, model):
     #print("Rótulos Verdadeiros:", real_labels)
     #print("Rótulos Previstos:", predicted_labels)
 
+
 def select_model(name):
     # Basic CNN
     if name == 'Basic':
@@ -196,7 +198,7 @@ if __name__ == "__main__":
 
     model = select_model('Basic')
 
-    handler = FedAvgServerHandler(model, global_round=2, sample_ratio=1.0)
+    handler = FedAvgServerHandler(model, global_round=10, sample_ratio=1.0)
 
 
     network = DistNetwork(address=(args.ip, args.port),
@@ -209,3 +211,5 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = load_dataset(args.dataset_id)
     train_loader, val_loader = create_loaders(X_train, X_test, y_train, y_test)
     evaluate_model(val_loader, model)
+
+    torch.save(model.state_dict(), 'modelo.pth')
