@@ -8,6 +8,7 @@ from flwr.common import Metrics
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     # Multiply accuracy of each client by number of examples used
     accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
+    print("Acuracies list: "+str(len(accuracies)))
     examples = [num_examples for num_examples, _ in metrics]
 
     # Aggregate and return custom metric (weighted average)
@@ -18,9 +19,9 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 strategy = fl.server.strategy.FedAvg(
     fraction_fit=1.0,
     #fraction_evaluate=0.5,
-    #min_fit_clients=10,
-    #min_evaluate_clients=5,
-    #min_available_clients=10,
+    min_fit_clients=3,
+    min_evaluate_clients=3,
+    min_available_clients=3,
     evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
 )
 
@@ -30,3 +31,5 @@ fl.server.start_server(
     config=fl.server.ServerConfig(num_rounds=3),
     strategy=strategy
 )
+print("Type: "+str(fl.server))
+

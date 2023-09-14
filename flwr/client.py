@@ -207,9 +207,10 @@ class FlowerClient(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
         loss, accuracy = test(net, testloader)
+        print("Acurácia do Cliente: "+str(args.dataset_id)+str(" eh: ")+str(accuracy))
         return loss, len(testloader.dataset), {"accuracy": accuracy}
 
-    
+
 
 
 # Start Flower client
