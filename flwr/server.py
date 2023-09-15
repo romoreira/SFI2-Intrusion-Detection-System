@@ -190,7 +190,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 _, testloader = load_data()
-net = SimpleNN(input_size=49, hidden_size=32, output_size=2).to(DEVICE)
+net = SimpleNN(input_size=49, hidden_size=64, output_size=2).to(DEVICE)
 
 # The `evaluate` function will be by Flower called after every round
 def evaluate(
@@ -198,7 +198,7 @@ def evaluate(
     parameters: fl.common.NDArrays,
     config: Dict[str, fl.common.Scalar],
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
-    net = SimpleNN(input_size=49, hidden_size=32, output_size=2).to(DEVICE)
+    net = SimpleNN(input_size=49, hidden_size=64, output_size=2).to(DEVICE)
     set_parameters(net, parameters)  # Update model with the latest parameters
     loss, accuracy = test(net, testloader)
     torch.save(net.state_dict(), 'server_model_aggregated.pth')

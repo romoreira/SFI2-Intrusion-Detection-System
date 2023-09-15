@@ -152,8 +152,8 @@ def train(net, trainloader, epochs):
     """Train the model on the training set."""
     print("Starting Client training for " + str(epochs) + " epochs")
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
-    #optimizer = torch.optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+    #optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
+    optimizer = torch.optim.SGD(net.parameters(), lr=0.001, momentum=0.8)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
@@ -225,7 +225,7 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-net = SimpleNN(input_size=49, hidden_size=32, output_size=2).to(DEVICE)
+net = SimpleNN(input_size=49, hidden_size=64, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
 
 
