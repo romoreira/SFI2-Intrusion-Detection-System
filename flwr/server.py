@@ -36,21 +36,27 @@ parser.add_argument("--batch_size", type=int, default=32, help='Batch Size do Da
 args = parser.parse_args()
 
 
-#CNN de Teste para o problema binário
-class SimpleNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(SimpleNN, self).__init__()
-        #self.lstm = nn.LSTM(input_size, hidden_size, num_layers=16, batch_first=True)
+class LSTMModel(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers, output_size):
+        super(LSTMModel, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, output_size)
-        self.sigmoid = nn.Sigmoid()  # Sigmoid activation for binary classification
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, hidden_size)
+        self.fc4 = nn.Linear(hidden_size, hidden_size)
+        self.fc5 = nn.Linear(hidden_size, output_size)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        #x = self.lstm(x)
         x = self.fc1(x)
         x = self.relu(x)
         x = self.fc2(x)
+        x = self.relu(x)
+        x = self.fc3(x)
+        x = self.relu(x)
+        x = self.fc4(x)
+        x = self.relu(x)
+        x = self.fc5(x)
         x = self.sigmoid(x)
         return x
 
@@ -190,7 +196,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 _, testloader = load_data()
-net = SimpleNN(input_size=49, hidden_size=64, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=16, num_layers=10, output_size=2).to(DEVICE)
 
 # The `evaluate` function will be by Flower called after every round
 def evaluate(
@@ -198,7 +204,7 @@ def evaluate(
     parameters: fl.common.NDArrays,
     config: Dict[str, fl.common.Scalar],
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
-    net = SimpleNN(input_size=49, hidden_size=64, output_size=2).to(DEVICE)
+    net = LSTMModel(input_size=49, hidden_size=16, num_layers=10, output_size=2).to(DEVICE)
     set_parameters(net, parameters)  # Update model with the latest parameters
     loss, accuracy = test(net, testloader)
     torch.save(net.state_dict(), 'server_model_aggregated.pth')

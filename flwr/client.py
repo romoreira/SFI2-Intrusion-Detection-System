@@ -34,23 +34,32 @@ class CustomDataset(Dataset):
         y_sample = self.y[idx]
         return x_sample, y_sample
 
-#CNN de Teste para o problema binário
-class SimpleNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(SimpleNN, self).__init__()
-        #self.lstm = nn.LSTM(input_size, hidden_size, num_layers=16, batch_first=True)
+
+class LSTMModel(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers, output_size):
+        super(LSTMModel, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, output_size)
-        self.sigmoid = nn.Sigmoid()  # Sigmoid activation for binary classification
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, hidden_size)
+        self.fc4 = nn.Linear(hidden_size, hidden_size)
+        self.fc5 = nn.Linear(hidden_size, output_size)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        #x = self.lstm(x)
         x = self.fc1(x)
         x = self.relu(x)
         x = self.fc2(x)
+        x = self.relu(x)
+        x = self.fc3(x)
+        x = self.relu(x)
+        x = self.fc4(x)
+        x = self.relu(x)
+        x = self.fc5(x)
         x = self.sigmoid(x)
         return x
+
+
 
 parser = argparse.ArgumentParser(description='Distbelief training example')
 parser.add_argument('--ip', type=str, default='127.0.0.1')
@@ -153,7 +162,7 @@ def train(net, trainloader, epochs):
     print("Starting Client training for " + str(epochs) + " epochs")
     criterion = torch.nn.CrossEntropyLoss()
     #optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
-    optimizer = torch.optim.SGD(net.parameters(), lr=0.001, momentum=0.8)
+    optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
@@ -186,7 +195,7 @@ def train(net, trainloader, epochs):
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("client_")+str(args.dataset_id)+"TRAIN_LOSS.pdf")
+    plt.savefig(str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
 
     # Plotar o gráfico de Accuracy
     plt.figure(figsize=(10, 5))
@@ -195,7 +204,7 @@ def train(net, trainloader, epochs):
     plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("client_")+str(args.dataset_id)+"TRAIN_ACC.pdf")
+    plt.savefig(str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
 
 
 def test(net, testloader):
@@ -225,7 +234,7 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-net = SimpleNN(input_size=49, hidden_size=64, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=16, num_layers=10, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
 
 
