@@ -207,7 +207,6 @@ def evaluate(
     return loss, {"accuracy": accuracy}
 
 
-
 # Define strategy
 strategy = fl.server.strategy.FedAvg(
     fraction_fit=1.0,
