@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # #############################################################################
 # 1. Regular PyTorch pipeline: nn.Module, train, test, and DataLoader
@@ -149,26 +150,64 @@ def create_loaders(X_train, X_test, y_train, y_test):
 
 def train(net, trainloader, epochs):
     """Train the model on the training set."""
-    print("Staring Client training for "+str(epochs)+" epochs")
+    print("Starting Client training for " + str(epochs) + " epochs")
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-    for _ in range(epochs):
-        for images, labels in tqdm(trainloader):
+
+    losses = []  # Lista para armazenar os valores de perda
+    accuracies = []  # Lista para armazenar os valores de acurácia
+
+    for epoch in range(epochs):
+        correct, total, epoch_loss = 0, 0, 0.0
+        for X, y in tqdm(trainloader):
             optimizer.zero_grad()
-            criterion(net(images.to(DEVICE)), labels.to(DEVICE)).backward()
+            loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
+            loss.backward()
             optimizer.step()
+            epoch_loss += loss
+
+            # Atualize o número de previsões corretas e o total
+            _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
+            total += y.size(0)
+            correct += (predicted == y.to(DEVICE)).sum().item()
+
+        epoch_loss /= len(trainloader.dataset)
+        epoch_acc = correct / total  # Calcule a acurácia aqui, dentro do loop externo
+        print(f"Epoch {epoch + 1}: train loss {epoch_loss}, accuracy {epoch_acc}")
+
+        losses.append(epoch_loss.item())  # Adicione o valor de perda à lista
+        accuracies.append(epoch_acc)  # Adicione o valor de acurácia à lista
+
+    # Plotar o gráfico de Loss
+    plt.figure(figsize=(10, 5))
+    plt.plot(losses, label='Loss', linewidth=2)
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(False)  # Desativa as gridlines
+    plt.savefig(str("client_")+str(args.dataset_id)+"TRAIN_LOSS.pdf")
+
+    # Plotar o gráfico de Accuracy
+    plt.figure(figsize=(10, 5))
+    plt.plot(accuracies, label='Accuracy', linewidth=2)
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.grid(False)  # Desativa as gridlines
+    plt.savefig(str("client_")+str(args.dataset_id)+"TRAIN_ACC.pdf")
 
 
 def test(net, testloader):
     """Validate the model on the test set."""
     criterion = torch.nn.CrossEntropyLoss()
-    correct, loss = 0, 0.0
+    correct, total, loss = 0, 0, 0.0
+    net.eval()
     with torch.no_grad():
-        for images, labels in tqdm(testloader):
-            outputs = net(images.to(DEVICE))
-            labels = labels.to(DEVICE)
-            loss += criterion(outputs, labels).item()
-            correct += (torch.max(outputs.data, 1)[1] == labels).sum().item()
+        for X, y in tqdm(testloader):
+            outputs = net(X.to(DEVICE))
+            y = y.to(DEVICE)
+            loss += criterion(outputs, y).item()
+            correct += (torch.max(outputs.data, 1)[1] == y).sum().item()
     accuracy = correct / len(testloader.dataset)
     return loss, accuracy
 
@@ -208,7 +247,7 @@ class FlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         loss, accuracy = test(net, testloader)
         print("Acurácia do Cliente: "+str(args.dataset_id)+str(" eh: ")+str(accuracy))
-        return loss, len(testloader.dataset), {"accuracy": accuracy}
+        return float(loss), len(testloader.dataset), {"accuracy": float(accuracy)}
 
 
 
