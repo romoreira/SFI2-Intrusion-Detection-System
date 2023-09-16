@@ -43,14 +43,7 @@ class LSTMModel(nn.Module):
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, hidden_size)
         self.fc4 = nn.Linear(hidden_size, hidden_size)
-        self.fc5 = nn.Linear(hidden_size, hidden_size)
-
-        # Adicione mais camadas totalmente conectadas
-        self.fc6 = nn.Linear(hidden_size, hidden_size)
-        self.fc7 = nn.Linear(hidden_size, hidden_size)
-        self.fc8 = nn.Linear(hidden_size, hidden_size)
-
-        self.fc9 = nn.Linear(hidden_size, output_size)
+        self.fc5 = nn.Linear(hidden_size, output_size)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -63,17 +56,6 @@ class LSTMModel(nn.Module):
         x = self.fc4(x)
         x = self.relu(x)
         x = self.fc5(x)
-        x = self.relu(x)
-
-        # Propague através das novas camadas totalmente conectadas
-        x = self.fc6(x)
-        x = self.relu(x)
-        x = self.fc7(x)
-        x = self.relu(x)
-        x = self.fc8(x)
-        x = self.relu(x)
-
-        x = self.fc9(x)
         x = self.sigmoid(x)
         return x
 
@@ -142,7 +124,7 @@ def load_dataset(dataset_id):
 
     # Dividir os dados em conjuntos de treinamento e teste
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
     # Padronizar os recursos (opcional, mas geralmente recomendado)
     scaler = StandardScaler()
@@ -204,7 +186,7 @@ def train(net, trainloader, epochs):
 
         epoch_loss /= len(trainloader.dataset)
         epoch_acc = correct / total  # Calcule a acurácia aqui, dentro do loop externo
-        print(f"Epoch {epoch + 1}: train loss {epoch_loss}, accuracy {epoch_acc}")
+        print(f"Epoch {epoch + 1}: train loss {epoch_loss}, accuracy: {round(float(epoch_acc) * 100, 2)}%")
 
         losses.append(epoch_loss.item())  # Adicione o valor de perda à lista
         accuracies.append(epoch_acc)  # Adicione o valor de acurácia à lista
@@ -255,7 +237,7 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-net = LSTMModel(input_size=49, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=128, num_layers=1000, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
 
 
@@ -278,7 +260,7 @@ class FlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         loss, accuracy = test(net, testloader)
         print("Acurácia do Cliente: "+str(args.dataset_id)+str(" eh: ")+str(accuracy))
-        return float(loss), len(testloader.dataset), {"accuracy": float(accuracy)}
+        return float(loss), len(testloader.dataset), {"accuracy": round(float(accuracy) * 100, 2)}
 
 
 

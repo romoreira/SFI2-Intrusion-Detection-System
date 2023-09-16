@@ -35,8 +35,6 @@ parser.add_argument("--dataset_id", type=int, help='ID do DataSet')
 parser.add_argument("--batch_size", type=int, default=32, help='Batch Size do Dataset')
 args = parser.parse_args()
 
-
-
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
@@ -45,14 +43,7 @@ class LSTMModel(nn.Module):
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, hidden_size)
         self.fc4 = nn.Linear(hidden_size, hidden_size)
-        self.fc5 = nn.Linear(hidden_size, hidden_size)
-
-        # Adicione mais camadas totalmente conectadas
-        self.fc6 = nn.Linear(hidden_size, hidden_size)
-        self.fc7 = nn.Linear(hidden_size, hidden_size)
-        self.fc8 = nn.Linear(hidden_size, hidden_size)
-
-        self.fc9 = nn.Linear(hidden_size, output_size)
+        self.fc5 = nn.Linear(hidden_size, output_size)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -65,17 +56,6 @@ class LSTMModel(nn.Module):
         x = self.fc4(x)
         x = self.relu(x)
         x = self.fc5(x)
-        x = self.relu(x)
-
-        # Propague através das novas camadas totalmente conectadas
-        x = self.fc6(x)
-        x = self.relu(x)
-        x = self.fc7(x)
-        x = self.relu(x)
-        x = self.fc8(x)
-        x = self.relu(x)
-
-        x = self.fc9(x)
         x = self.sigmoid(x)
         return x
 
@@ -161,7 +141,7 @@ def load_dataset(dataset_id):
 
     # Dividir os dados em conjuntos de treinamento e teste
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
     # Padronizar os recursos (opcional, mas geralmente recomendado)
     scaler = StandardScaler()
@@ -215,7 +195,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 _, testloader = load_data()
-net = LSTMModel(input_size=49, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=64, num_layers=1000, output_size=2).to(DEVICE)
 
 # The `evaluate` function will be by Flower called after every round
 def evaluate(
@@ -223,7 +203,7 @@ def evaluate(
     parameters: fl.common.NDArrays,
     config: Dict[str, fl.common.Scalar],
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
-    net = LSTMModel(input_size=49, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
+    net = LSTMModel(input_size=49, hidden_size=128, num_layers=1000, output_size=2).to(DEVICE)
     set_parameters(net, parameters)  # Update model with the latest parameters
     loss, accuracy = test(net, testloader)
     torch.save(net.state_dict(), 'server_model_aggregated.pth')
