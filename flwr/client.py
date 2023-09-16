@@ -43,11 +43,14 @@ class LSTMModel(nn.Module):
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, hidden_size)
         self.fc4 = nn.Linear(hidden_size, hidden_size)
+        self.fc5 = nn.Linear(hidden_size, hidden_size)
 
-        # Adicione mais uma camada totalmente conectada
+        # Adicione mais camadas totalmente conectadas
         self.fc6 = nn.Linear(hidden_size, hidden_size)
+        self.fc7 = nn.Linear(hidden_size, hidden_size)
+        self.fc8 = nn.Linear(hidden_size, hidden_size)
 
-        self.fc5 = nn.Linear(hidden_size, output_size)
+        self.fc9 = nn.Linear(hidden_size, output_size)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -59,15 +62,20 @@ class LSTMModel(nn.Module):
         x = self.relu(x)
         x = self.fc4(x)
         x = self.relu(x)
-
-        # Propague através da nova camada totalmente conectada
-        x = self.fc6(x)
+        x = self.fc5(x)
         x = self.relu(x)
 
-        x = self.fc5(x)
+        # Propague através das novas camadas totalmente conectadas
+        x = self.fc6(x)
+        x = self.relu(x)
+        x = self.fc7(x)
+        x = self.relu(x)
+        x = self.fc8(x)
+        x = self.relu(x)
+
+        x = self.fc9(x)
         x = self.sigmoid(x)
         return x
-
 
 
 parser = argparse.ArgumentParser(description='Distbelief training example')
@@ -247,7 +255,7 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-net = LSTMModel(input_size=49, hidden_size=16, num_layers=10, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
 
 
