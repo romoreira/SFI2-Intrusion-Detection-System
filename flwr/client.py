@@ -43,6 +43,10 @@ class LSTMModel(nn.Module):
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, hidden_size)
         self.fc4 = nn.Linear(hidden_size, hidden_size)
+
+        # Adicione mais uma camada totalmente conectada
+        self.fc6 = nn.Linear(hidden_size, hidden_size)
+
         self.fc5 = nn.Linear(hidden_size, output_size)
         self.sigmoid = nn.Sigmoid()
 
@@ -55,6 +59,11 @@ class LSTMModel(nn.Module):
         x = self.relu(x)
         x = self.fc4(x)
         x = self.relu(x)
+
+        # Propague através da nova camada totalmente conectada
+        x = self.fc6(x)
+        x = self.relu(x)
+
         x = self.fc5(x)
         x = self.sigmoid(x)
         return x
@@ -71,6 +80,7 @@ parser.add_argument("--epochs", type=int)
 parser.add_argument("--lr", type=float, default=0.001)
 parser.add_argument("--dataset_id", type=int, help='ID do DataSet')
 parser.add_argument("--batch_size", type=int, default=32, help='Batch Size do Dataset')
+parser.add_argument("--optim", type=str, help='Optimizer to choose: Adam or SGD')
 args = parser.parse_args()
 
 def column_remover(dataframe):
@@ -161,8 +171,11 @@ def train(net, trainloader, epochs):
     """Train the model on the training set."""
     print("Starting Client training for " + str(epochs) + " epochs")
     criterion = torch.nn.CrossEntropyLoss()
-    #optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
-    optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
+
+    if str(args.optim) == "Adam":
+        optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
+    elif str(args.optim) == "SGD":
+        optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia

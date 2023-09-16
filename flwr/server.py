@@ -44,6 +44,10 @@ class LSTMModel(nn.Module):
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, hidden_size)
         self.fc4 = nn.Linear(hidden_size, hidden_size)
+
+        # Adicione mais uma camada totalmente conectada
+        self.fc6 = nn.Linear(hidden_size, hidden_size)
+
         self.fc5 = nn.Linear(hidden_size, output_size)
         self.sigmoid = nn.Sigmoid()
 
@@ -56,6 +60,11 @@ class LSTMModel(nn.Module):
         x = self.relu(x)
         x = self.fc4(x)
         x = self.relu(x)
+
+        # Propague através da nova camada totalmente conectada
+        x = self.fc6(x)
+        x = self.relu(x)
+
         x = self.fc5(x)
         x = self.sigmoid(x)
         return x
