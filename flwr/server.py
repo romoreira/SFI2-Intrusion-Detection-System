@@ -44,7 +44,7 @@ class LSTMModel(nn.Module):
         self.fc3 = nn.Linear(hidden_size, hidden_size)
         self.fc4 = nn.Linear(hidden_size, hidden_size)
         self.fc5 = nn.Linear(hidden_size, output_size)
-        self.sigmoid = nn.Sigmoid()
+        #self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         x = self.fc1(x)
@@ -56,7 +56,7 @@ class LSTMModel(nn.Module):
         x = self.fc4(x)
         x = self.relu(x)
         x = self.fc5(x)
-        x = self.sigmoid(x)
+       #x = self.sigmoid(x)
         return x
 
 
@@ -195,7 +195,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 _, testloader = load_data()
-net = LSTMModel(input_size=49, hidden_size=64, num_layers=1000, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
 
 # The `evaluate` function will be by Flower called after every round
 def evaluate(
@@ -203,7 +203,7 @@ def evaluate(
     parameters: fl.common.NDArrays,
     config: Dict[str, fl.common.Scalar],
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
-    net = LSTMModel(input_size=49, hidden_size=128, num_layers=1000, output_size=2).to(DEVICE)
+    net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
     set_parameters(net, parameters)  # Update model with the latest parameters
     loss, accuracy = test(net, testloader)
     torch.save(net.state_dict(), 'server_model_aggregated.pth')

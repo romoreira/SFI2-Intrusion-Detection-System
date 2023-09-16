@@ -162,6 +162,7 @@ def train(net, trainloader, epochs):
     """Train the model on the training set."""
     print("Starting Client training for " + str(epochs) + " epochs")
     criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.BCELoss()
 
     if str(args.optim) == "Adam":
         optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
@@ -238,7 +239,7 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-net = LSTMModel(input_size=49, hidden_size=128, num_layers=1000, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
 
 
