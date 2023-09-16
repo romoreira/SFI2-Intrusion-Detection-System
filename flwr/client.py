@@ -162,12 +162,12 @@ def train(net, trainloader, epochs):
     """Train the model on the training set."""
     print("Starting Client training for " + str(epochs) + " epochs")
     criterion = torch.nn.CrossEntropyLoss()
-    criterion = torch.nn.BCELoss()
+
 
     if str(args.optim) == "Adam":
         optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
     elif str(args.optim) == "SGD":
-        optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
+        optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.5)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia

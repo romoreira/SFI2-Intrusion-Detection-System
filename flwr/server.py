@@ -44,7 +44,7 @@ class LSTMModel(nn.Module):
         self.fc3 = nn.Linear(hidden_size, hidden_size)
         self.fc4 = nn.Linear(hidden_size, hidden_size)
         self.fc5 = nn.Linear(hidden_size, output_size)
-        #self.sigmoid = nn.Sigmoid()
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         x = self.fc1(x)
@@ -56,7 +56,7 @@ class LSTMModel(nn.Module):
         x = self.fc4(x)
         x = self.relu(x)
         x = self.fc5(x)
-       #x = self.sigmoid(x)
+        x = self.sigmoid(x)
         return x
 
 
@@ -231,5 +231,4 @@ fl.server.start_server(
     config=fl.server.ServerConfig(num_rounds=3),
     strategy=strategy
 )
-
 
