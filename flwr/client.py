@@ -131,6 +131,7 @@ def load_dataset(dataset_id):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
 
+
     # Converter os dados para tensores PyTorch
     X_train = torch.tensor(X_train, dtype=torch.float32)
     X_test = torch.tensor(X_test, dtype=torch.float32)
