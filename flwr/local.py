@@ -40,10 +40,10 @@ class LSTMModel(nn.Module):
         super(LSTMModel, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.fc3 = nn.Linear(hidden_size, hidden_size)
-        self.fc4 = nn.Linear(hidden_size, hidden_size)
-        self.fc5 = nn.Linear(hidden_size, output_size)
+        self.fc2 = nn.Linear(hidden_size, hidden_size * 2)  # Aumento no número de unidades ocultas
+        self.fc3 = nn.Linear(hidden_size * 2, hidden_size * 4)  # Aumento no número de unidades ocultas
+        self.fc4 = nn.Linear(hidden_size * 4, hidden_size * 4)  # Aumento no número de unidades ocultas
+        self.fc5 = nn.Linear(hidden_size * 4, output_size)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -162,12 +162,7 @@ def train(net, trainloader, epochs):
     """Train the model on the training set."""
     print("Starting Client training for " + str(epochs) + " epochs")
     criterion = torch.nn.CrossEntropyLoss()
-
-
-    if str(args.optim) == "Adam":
-        optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
-    elif str(args.optim) == "SGD":
-        optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.5)
+    optimizer = torch.optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
@@ -229,7 +224,7 @@ def test(net, testloader):
 
 def load_data():
     """Load Custom Dataset."""
-    X_train, X_test, y_train, y_test = load_dataset(args.dataset_id)
+    X_train, X_test, y_train, y_test = load_dataset(2)
     train_loader, val_loader = create_loaders(X_train, X_test, y_train, y_test)
     return train_loader, val_loader
 
@@ -241,6 +236,5 @@ def load_data():
 # Load model and data (simple CNN, CIFAR-10)
 net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
-train(net, trainloader, 50)
+train(net, trainloader, 100)
 test(net, testloader)
-
