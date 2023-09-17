@@ -13,6 +13,10 @@ from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset
 import pandas as pd
 import matplotlib.pyplot as plt
+import optuna
+from optuna.trial import TrialState
+import os
+import torch.optim as optim
 
 # #############################################################################
 # 1. Regular PyTorch pipeline: nn.Module, train, test, and DataLoader
@@ -40,10 +44,10 @@ class LSTMModel(nn.Module):
         super(LSTMModel, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size * 2)  # Aumento no número de unidades ocultas
-        self.fc3 = nn.Linear(hidden_size * 2, hidden_size * 4)  # Aumento no número de unidades ocultas
-        self.fc4 = nn.Linear(hidden_size * 4, hidden_size * 4)  # Aumento no número de unidades ocultas
-        self.fc5 = nn.Linear(hidden_size * 4, output_size)
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, hidden_size)
+        self.fc4 = nn.Linear(hidden_size, hidden_size)
+        self.fc5 = nn.Linear(hidden_size, output_size)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -102,6 +106,46 @@ def column_remover(dataframe):
     print("Dataset cleaned!")
     return dataframe
 
+def objective(trial):
+    """Objective function to be optimized by Optuna.
+
+    Hyperparameters chosen to be optimized: optimizer, learning rate,
+    dropout values, number of convolutional layers, number of filters of
+    convolutional layers, number of neurons of fully connected layers.
+
+    Inputs:
+        - trial (optuna.trial._trial.Trial): Optuna trial
+    Returns:
+        - accuracy(torch.Tensor): The test accuracy. Parameter to be maximized.
+    """
+
+
+    num_layers = trial.suggest_int("num_layers", 10, 100, 100)  # Number of neurons of FC1 layer
+    hidden_size = trial.suggest_int("hidden_size", 64, 128, 256)     # Dropout for convolutional layer 2
+
+
+    # Generate the model
+    model = LSTMModel(input_size=49, hidden_size=hidden_size, num_layers=num_layers, output_size=2).to(DEVICE)
+
+
+    # Generate the optimizers
+    optimizer_name = trial.suggest_categorical("optimizer", ["Adam", "RMSprop", "SGD"])  # Optimizers
+    lr = trial.suggest_float("lr", 0.0001, 0.1, log=True) # Learning rates
+    optimizer = getattr(optim, optimizer_name)(model.parameters(), lr=lr)
+
+    # Training of the model
+    for epoch in range(n_epochs):
+        train(model, optimizer)  # Train the model
+        accuracy = test(model)   # Evaluate the model
+
+        # For pruning (stops trial early if not promising)
+        trial.report(accuracy, epoch)
+        # Handle pruning based on the intermediate value.
+        if trial.should_prune():
+            raise optuna.exceptions.TrialPruned()
+
+    return accuracy
+
 def load_dataset(dataset_id):
 
 
@@ -158,56 +202,29 @@ def create_loaders(X_train, X_test, y_train, y_test):
     return train_loader, test_loader
 
 
-def train(net, trainloader, epochs):
+def train(net, optimizer):
     """Train the model on the training set."""
-    print("Starting Client training for " + str(epochs) + " epochs")
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
+    criterion = torch.nn.CrossEntropyLoss()
+    correct, total, epoch_loss = 0, 0, 0.0
+    for X, y in tqdm(trainloader):
+        optimizer.zero_grad()
+        loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
+        loss.backward()
+        optimizer.step()
+        epoch_loss += loss
 
-    for epoch in range(epochs):
-        correct, total, epoch_loss = 0, 0, 0.0
-        for X, y in tqdm(trainloader):
-            optimizer.zero_grad()
-            loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
-            loss.backward()
-            optimizer.step()
-            epoch_loss += loss
-
-            # Atualize o número de previsões corretas e o total
-            _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
-            total += y.size(0)
-            correct += (predicted == y.to(DEVICE)).sum().item()
-
-        epoch_loss /= len(trainloader.dataset)
-        epoch_acc = correct / total  # Calcule a acurácia aqui, dentro do loop externo
-        print(f"Epoch {epoch + 1}: train loss {epoch_loss}, accuracy: {round(float(epoch_acc) * 100, 2)}%")
-
-        losses.append(epoch_loss.item())  # Adicione o valor de perda à lista
-        accuracies.append(epoch_acc)  # Adicione o valor de acurácia à lista
-
-    # Plotar o gráfico de Loss
-    plt.figure(figsize=(10, 5))
-    plt.plot(losses, label='Loss', linewidth=2)
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("./results/neural_networks/")+str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
-
-    # Plotar o gráfico de Accuracy
-    plt.figure(figsize=(10, 5))
-    plt.plot(accuracies, label='Accuracy', linewidth=2)
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("./results/neural_networks/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
+        # Atualize o número de previsões corretas e o total
+        _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
+        total += y.size(0)
+        correct += (predicted == y.to(DEVICE)).sum().item()
 
 
-def test(net, testloader):
+
+
+def test(net):
     """Validate the model on the test set."""
     criterion = torch.nn.CrossEntropyLoss()
     correct, total, loss = 0, 0, 0.0
@@ -219,12 +236,12 @@ def test(net, testloader):
             loss += criterion(outputs, y).item()
             correct += (torch.max(outputs.data, 1)[1] == y).sum().item()
     accuracy = correct / len(testloader.dataset)
-    return loss, accuracy
+    return accuracy
 
 
 def load_data():
     """Load Custom Dataset."""
-    X_train, X_test, y_train, y_test = load_dataset(2)
+    X_train, X_test, y_train, y_test = load_dataset(args.dataset_id)
     train_loader, val_loader = create_loaders(X_train, X_test, y_train, y_test)
     return train_loader, val_loader
 
@@ -234,7 +251,87 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
-trainloader, testloader = load_data()
-train(net, trainloader, 100)
-test(net, testloader)
+#net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+#trainloader, testloader = load_data()
+#train(net, trainloader, 200)
+#test(net, testloader)
+
+
+
+if __name__ == '__main__':
+
+    # -------------------------------------------------------------------------
+    # Optimization study for a PyTorch CNN with Optuna
+    # -------------------------------------------------------------------------
+
+    # Use cuda if available for faster computations
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # --- Parameters ----------------------------------------------------------
+    n_epochs = 50                         # Number of training epochs
+    batch_size_train = 64                 # Batch size for training data
+    batch_size_test = 1000                # Batch size for testing data
+    number_of_trials = 100                # Number of Optuna trials
+    limit_obs = True                      # Limit number of observations for faster computation
+
+    # *** Note: For more accurate results, do not limit the observations.
+    #           If not limited, however, it might take a very long time to run.
+    #           Another option is to limit the number of epochs. ***
+
+    if limit_obs:  # Limit number of observations
+        number_of_train_examples = 500 * batch_size_train  # Max train observations
+        number_of_test_examples = 5 * batch_size_test      # Max test observations
+    else:
+        number_of_train_examples = 60000                   # Max train observations
+        number_of_test_examples = 10000                    # Max test observations
+    # -------------------------------------------------------------------------
+
+    # Make runs repeatable
+    random_seed = 1
+    torch.backends.cudnn.enabled = False  # Disable cuDNN use of nondeterministic algorithms
+    torch.manual_seed(random_seed)
+
+    trainloader, testloader = load_data()
+
+    # Create an Optuna study to maximize test accuracy
+    study = optuna.create_study(direction="maximize")
+    study.optimize(objective, n_trials=number_of_trials)
+
+    # -------------------------------------------------------------------------
+    # Results
+    # -------------------------------------------------------------------------
+
+    # Find number of pruned and completed trials
+    pruned_trials = study.get_trials(deepcopy=False, states=[TrialState.PRUNED])
+    complete_trials = study.get_trials(deepcopy=False, states=[TrialState.COMPLETE])
+
+    # Display the study statistics
+    print("\nStudy statistics: ")
+    print("  Number of finished trials: ", len(study.trials))
+    print("  Number of pruned trials: ", len(pruned_trials))
+    print("  Number of complete trials: ", len(complete_trials))
+
+    trial = study.best_trial
+    print("Best trial:")
+    print("  Value: ", trial.value)
+    print("  Params: ")
+    for key, value in trial.params.items():
+        print("    {}: {}".format(key, value))
+
+    # Save results to csv file
+    df = study.trials_dataframe().drop(['datetime_start', 'datetime_complete', 'duration'], axis=1)  # Exclude columns
+    df = df.loc[df['state'] == 'COMPLETE']        # Keep only results that did not prune
+    df = df.drop('state', axis=1)                 # Exclude state column
+    df = df.sort_values('value')                  # Sort based on accuracy
+    df.to_csv('./results/'+str(args.dataset_id)+'_optuna_results.csv', index=False)  # Save to csv file
+
+    # Display results in a dataframe
+    print("\nOverall Results (ordered by accuracy):\n {}".format(df))
+
+    # Find the most important hyperparameters
+    most_important_parameters = optuna.importance.get_param_importances(study, target=None)
+
+    # Display the most important hyperparameters
+    print('\nMost important hyperparameters:')
+    for key, value in most_important_parameters.items():
+        print('  {}:{}{:.2f}%'.format(key, (15-len(key))*' ', value*100))
