@@ -39,29 +39,29 @@ class CustomDataset(Dataset):
         return x_sample, y_sample
 
 
+#CNN de Teste para o problema binário
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.fc3 = nn.Linear(hidden_size, hidden_size)
-        self.fc4 = nn.Linear(hidden_size, hidden_size)
-        self.fc5 = nn.Linear(hidden_size, output_size)
-        self.sigmoid = nn.Sigmoid()
+        # Duas camadas de RNN
+        self.rnn1 = nn.RNN(input_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
+        self.rnn2 = nn.RNN(hidden_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
+
+        # Camada de saída totalmente conectada
+        self.fc = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        x = self.fc1(x)
-        x = self.relu(x)
-        x = self.fc2(x)
-        x = self.relu(x)
-        x = self.fc3(x)
-        x = self.relu(x)
-        x = self.fc4(x)
-        x = self.relu(x)
-        x = self.fc5(x)
-        x = self.sigmoid(x)
-        return x
+        # Propagação através da primeira camada RNN
+        out1, _ = self.rnn1(x)
+
+        # Propagação através da segunda camada RNN
+        out2, _ = self.rnn2(out1)
+        out = self.fc(out2)
+        return out
+
+
+
+
 
 
 parser = argparse.ArgumentParser(description='Distbelief training example')
@@ -120,12 +120,12 @@ def objective(trial):
     """
 
 
-    num_layers = trial.suggest_int("num_layers", 10, 100, 100)  # Number of neurons of FC1 layer
-    hidden_size = trial.suggest_int("hidden_size", 64, 128, 256)     # Dropout for convolutional layer 2
+    num_layers = trial.suggest_int("num_layers", 5, 100, 100)  # Number of neurons of FC1 layer
+    hidden_size = trial.suggest_int("hidden_size", 32, 64, 128)     # Dropout for convolutional layer 2
 
 
     # Generate the model
-    model = LSTMModel(input_size=49, hidden_size=hidden_size, num_layers=num_layers, output_size=2).to(DEVICE)
+    model = LSTMModel(input_size=49, hidden_size=hidden_size, num_layers=num_layers, output_size=32).to(DEVICE)
 
 
     # Generate the optimizers
