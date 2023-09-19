@@ -192,7 +192,7 @@ def train(net, trainloader, epochs):
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
-
+    net.train()
     for epoch in range(epochs):
         correct, total, epoch_loss = 0, 0, 0.0
         for X, y in tqdm(trainloader):
