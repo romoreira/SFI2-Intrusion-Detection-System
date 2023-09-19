@@ -186,7 +186,9 @@ def train(net, trainloader, epochs):
     if str(args.optim) == "Adam":
         optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
     elif str(args.optim) == "SGD":
-        optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.5)
+        optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
+    elif str(args.optim) == "RMSprop":
+        optimizer = torch.optim.RMSprop(net.parameters(), lr=args.lr, momentum=0.9)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
@@ -257,7 +259,7 @@ def load_data():
 # 2. Federation of the pipeline with Flower
 # #############################################################################
 
-# Load model and data (simple CNN, CIFAR-10)
+
 net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
 

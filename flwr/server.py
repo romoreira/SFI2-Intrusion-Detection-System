@@ -125,6 +125,28 @@ def column_remover(dataframe):
     print("Dataset cleaned!")
     return dataframe
 
+def create_federated_testloader():
+    # Leia o arquivo CSV em um DataFrame
+    df = pd.read_csv('../dataset/extended_fed_tester/dataframe_final.csv')
+
+    # Crie o primeiro DataFrame com as primeiras 49 colunas
+    X_test = df.iloc[:, :49]
+
+    # Crie o segundo DataFrame com a última coluna
+    y_test = df.iloc[:, -1]
+
+    X_test = torch.tensor(X_test.to_numpy(), dtype=torch.float32)
+    y_test = torch.tensor(y_test.values, dtype=torch.int64)
+
+
+    test_dataset = CustomDataset(X_test, y_test)
+
+    # Crie os data loaders
+    # train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
+
+    return '', test_loader
+
 def create_loaders(X_train, X_test, y_train, y_test):
     #print("\n")
     #print("Shape X_train: "+str(X_train.shape))
@@ -132,7 +154,8 @@ def create_loaders(X_train, X_test, y_train, y_test):
     #print("Shape y_train: " + str(y_train.shape))
     #print("Shape Y_test: " + str(y_test.shape))
     #exit()
-
+    print("TYPE: "+str(type(X_test)))
+    print("TYPE: " + str(type(y_test)))
     # Crie conjuntos de dados para treinamento e teste
     train_dataset = CustomDataset(X_train, y_train)
     test_dataset = CustomDataset(X_test, y_test)
@@ -217,7 +240,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     # Aggregate and return custom metric (weighted average)
     return {"accuracy": sum(accuracies) / sum(examples)}
 
-_, testloader = load_data()
+_, testloader = create_federated_testloader()
 net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
 
 # The `evaluate` function will be by Flower called after every round
