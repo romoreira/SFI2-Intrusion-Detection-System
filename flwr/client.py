@@ -63,21 +63,26 @@ class LSTMModel(nn.Module):
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
-        # Duas camadas de RNN
-        self.rnn1 = nn.RNN(input_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
-        self.rnn2 = nn.RNN(hidden_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
-
-        # Camada de saída totalmente conectada
-        self.fc = nn.Linear(hidden_size, output_size)
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, hidden_size)
+        self.fc4 = nn.Linear(hidden_size, hidden_size)
+        self.fc5 = nn.Linear(hidden_size, output_size)
+        #self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        # Propagação através da primeira camada RNN
-        out1, _ = self.rnn1(x)
-
-        # Propagação através da segunda camada RNN
-        out2, _ = self.rnn2(out1)
-        out = self.fc(out2)
-        return out
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+        x = self.relu(x)
+        x = self.fc3(x)
+        x = self.relu(x)
+        x = self.fc4(x)
+        x = self.relu(x)
+        x = self.fc5(x)
+        #x = self.sigmoid(x)
+        return x
 
 parser = argparse.ArgumentParser(description='Distbelief training example')
 parser.add_argument('--ip', type=str, default='127.0.0.1')
@@ -260,7 +265,7 @@ def load_data():
 # #############################################################################
 
 
-net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=32, num_layers=5, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
 
 

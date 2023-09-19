@@ -66,21 +66,26 @@ class LSTMModel(nn.Module):
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
-        # Duas camadas de RNN
-        self.rnn1 = nn.RNN(input_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
-        self.rnn2 = nn.RNN(hidden_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
-
-        # Camada de saída totalmente conectada
-        self.fc = nn.Linear(hidden_size, output_size)
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, hidden_size)
+        self.fc4 = nn.Linear(hidden_size, hidden_size)
+        self.fc5 = nn.Linear(hidden_size, output_size)
+        #self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        # Propagação através da primeira camada RNN
-        out1, _ = self.rnn1(x)
-
-        # Propagação através da segunda camada RNN
-        out2, _ = self.rnn2(out1)
-        out = self.fc(out2)
-        return out
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+        x = self.relu(x)
+        x = self.fc3(x)
+        x = self.relu(x)
+        x = self.fc4(x)
+        x = self.relu(x)
+        x = self.fc5(x)
+        #x = self.sigmoid(x)
+        return x
 
 
 class CustomDataset(Dataset):
@@ -241,7 +246,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 _, testloader = create_federated_testloader()
-net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=49, hidden_size=32, num_layers=5, output_size=2).to(DEVICE)
 
 # The `evaluate` function will be by Flower called after every round
 def evaluate(
@@ -249,7 +254,7 @@ def evaluate(
     parameters: fl.common.NDArrays,
     config: Dict[str, fl.common.Scalar],
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
-    net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+    net = LSTMModel(input_size=49, hidden_size=32, num_layers=5, output_size=2).to(DEVICE)
     set_parameters(net, parameters)  # Update model with the latest parameters
     loss, accuracy = test(net, testloader)
     torch.save(net.state_dict(), 'server_model_aggregated.pth')
