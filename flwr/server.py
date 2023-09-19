@@ -35,6 +35,8 @@ parser.add_argument("--dataset_id", type=int, help='ID do DataSet')
 parser.add_argument("--batch_size", type=int, default=32, help='Batch Size do Dataset')
 args = parser.parse_args()
 
+
+'''
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
@@ -58,6 +60,27 @@ class LSTMModel(nn.Module):
         x = self.fc5(x)
         x = self.sigmoid(x)
         return x
+'''
+
+#CNN de Teste para o problema binário
+class LSTMModel(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers, output_size):
+        super(LSTMModel, self).__init__()
+        # Duas camadas de RNN
+        self.rnn1 = nn.RNN(input_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
+        self.rnn2 = nn.RNN(hidden_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
+
+        # Camada de saída totalmente conectada
+        self.fc = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        # Propagação através da primeira camada RNN
+        out1, _ = self.rnn1(x)
+
+        # Propagação através da segunda camada RNN
+        out2, _ = self.rnn2(out1)
+        out = self.fc(out2)
+        return out
 
 
 class CustomDataset(Dataset):
