@@ -17,6 +17,9 @@ import optuna
 from optuna.trial import TrialState
 import os
 import torch.optim as optim
+from sklearn.preprocessing import RobustScaler
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
 
 # #############################################################################
 # 1. Regular PyTorch pipeline: nn.Module, train, test, and DataLoader
@@ -42,35 +45,18 @@ class CustomDataset(Dataset):
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
-        # Camada de entrada
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
-
-        # Adicionando 20 camadas intermediárias
-        self.hidden_layers = nn.ModuleList([
-            nn.Linear(hidden_size, hidden_size) for _ in range(10)
-        ])
-
-        # Camada de saída
-        self.fc_final = nn.Linear(hidden_size, output_size)
+        self.input_layer = nn.Linear(input_size, hidden_size)
+        self.hidden_layer = nn.Linear(hidden_size, hidden_size)
+        self.output_layer = nn.Linear(hidden_size, output_size)
+        self.activation = nn.ReLU()
 
     def forward(self, x):
-        # Camada de entrada
-        x = self.fc1(x)
-        x = self.relu(x)
-
-        # Passando pelos módulos intermediários
-        for layer in self.hidden_layers:
-            x = layer(x)
-            x = self.relu(x)
-
-        # Camada de saída
-        x = self.fc_final(x)
+        x = self.activation(self.input_layer(x))
+        x = self.activation(self.hidden_layer(x))
+        x = self.output_layer(x)
+        # Aplicar a função Softmax na camada de saída
+        x = nn.functional.softmax(x, dim=1)
         return x
-
-
-
-
 
 parser = argparse.ArgumentParser(description='Distbelief training example')
 parser.add_argument('--ip', type=str, default='127.0.0.1')
@@ -128,18 +114,17 @@ def objective(trial):
     """
 
 
-    #num_layers = trial.suggest_int("num_layers", 5, 30, 100)  # Number of neurons of FC1 layer 5, 100, 100
-    #hidden_size = trial.suggest_int("hidden_size", 32, 64, 128)     # Dropout for convolutional layer 2
-    num_layers = 5
-    hidden_size = 32
+    num_layers = trial.suggest_int("num_layers", 5, 100, 100)  # Number of neurons of FC1 layer
+    hidden_size = trial.suggest_int("hidden_size", 32, 64, 128)     # Dropout for convolutional layer 2
 
-    # Generate the model input_size 49
+
+    # Generate the model
     model = LSTMModel(input_size=49, hidden_size=hidden_size, num_layers=num_layers, output_size=32).to(DEVICE)
 
 
     # Generate the optimizers
     optimizer_name = trial.suggest_categorical("optimizer", ["Adam", "RMSprop", "SGD"])  # Optimizers
-    lr = trial.suggest_float("lr", 0.0001, 0.001, log=True) # Learning rates 0.0001, 0.1
+    lr = trial.suggest_float("lr", 0.0001, 0.1, log=True) # Learning rates
     optimizer = getattr(optim, optimizer_name)(model.parameters(), lr=lr)
 
     # Training of the model
@@ -155,32 +140,58 @@ def objective(trial):
 
     return accuracy
 
+def remove_spaces(column_name):
+    return column_name.strip()
+
 def load_dataset(dataset_id):
 
 
     if dataset_id == 1:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/extended/output_bottom.csv"
+        data_dir = "../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
     elif dataset_id == 2:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/extended/output_left.csv"
+        data_dir = "../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
     elif dataset_id == 3:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/extended/output_right.csv"
+        data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
 
     df = pd.read_csv(data_dir)
-    df = column_remover(df)
+    #df = column_remover(df)
+    df.columns = df.columns.map(remove_spaces)
+
+    df['Label'] = df['Label'].apply(lambda x: 'MALIGNANT' if x != 'BENIGN' else x)
+    print(df['Label'].value_counts())
 
     # Separar as colunas de recursos (features) e rótulos (labels)
-    X = df.drop('NST_B_Label', axis=1)  # Substitua 'label' pelo nome da coluna de rótulos
-    y = df['NST_B_Label']
+    X = df.drop('Label', axis=1)  # Substitua 'label' pelo nome da coluna de rótulos
+    y = df['Label']
 
     # Dividir os dados em conjuntos de treinamento e teste
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    X_train = X_train.replace([np.inf, -np.inf], np.nan)
+    X_test = X_test.replace([np.inf, -np.inf], np.nan)
+
+    X_train = X_train.fillna(0)
+    X_test = X_test.fillna(0)
+
+
+    # Crie um objeto LabelEncoder
+    label_encoder = LabelEncoder()
+
+    # Ajuste o LabelEncoder aos seus dados de classe (y_train)
+    y_train_encoded = label_encoder.fit_transform(y_train)
+    y_test_encoded = label_encoder.fit_transform(y_test)
+
+    # Crie um tensor PyTorch a partir dos valores codificados
+    y_train = torch.tensor(y_train_encoded, dtype=torch.int64)
+    y_test = torch.tensor(y_test_encoded, dtype=torch.int64)
+
 
     # Padronizar os recursos (opcional, mas geralmente recomendado)
-    scaler = StandardScaler()
+    scaler = RobustScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
 
@@ -188,8 +199,9 @@ def load_dataset(dataset_id):
     # Converter os dados para tensores PyTorch
     X_train = torch.tensor(X_train, dtype=torch.float32)
     X_test = torch.tensor(X_test, dtype=torch.float32)
-    y_train = torch.tensor(y_train.values, dtype=torch.int64)
-    y_test = torch.tensor(y_test.values, dtype=torch.int64)
+    #y_train = torch.tensor(y_train.values, dtype=torch.int64)
+    #y_test = torch.tensor(y_test.values, dtype=torch.int64)
+
     return X_train, X_test, y_train, y_test
 
 
@@ -211,29 +223,62 @@ def create_loaders(X_train, X_test, y_train, y_test):
     return train_loader, test_loader
 
 
-def train(net, optimizer):
+def train(net, trainloader, epochs):
     """Train the model on the training set."""
+    print("Starting Client training for " + str(epochs) + " epochs")
+    criterion = torch.nn.CrossEntropyLoss()
+
+
+    #optimizer = torch.optim.RMSprop(net.parameters(), lr=args.lr, momentum=0.9)
+    optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
+    #optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
-    criterion = torch.nn.CrossEntropyLoss()
-    correct, total, epoch_loss = 0, 0, 0.0
-    for X, y in tqdm(trainloader):
-        optimizer.zero_grad()
-        loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
-        loss.backward()
-        optimizer.step()
-        epoch_loss += loss
+    net.train()
+    for epoch in range(epochs):
+        correct, total, epoch_loss = 0, 0, 0.0
+        for X, y in tqdm(trainloader):
+            optimizer.zero_grad()
+            loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss
 
-        # Atualize o número de previsões corretas e o total
-        _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
-        total += y.size(0)
-        correct += (predicted == y.to(DEVICE)).sum().item()
+            # Atualize o número de previsões corretas e o total
+            _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
+            total += y.size(0)
+            correct += (predicted == y.to(DEVICE)).sum().item()
+
+        epoch_loss /= len(trainloader.dataset)
+        epoch_acc = correct / total  # Calcule a acurácia aqui, dentro do loop externo
+        print(f"Epoch {epoch + 1}: train loss {epoch_loss}, accuracy: {round(float(epoch_acc) * 100, 2)}%")
+
+        losses.append(epoch_loss.item())  # Adicione o valor de perda à lista
+        accuracies.append(epoch_acc)  # Adicione o valor de acurácia à lista
+
+    # Plotar o gráfico de Loss
+    plt.figure(figsize=(10, 5))
+    plt.plot(losses, label='Loss', linewidth=2)
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(False)  # Desativa as gridlines
+    plt.savefig(str("./results/neural_networks/")+str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
+
+    # Plotar o gráfico de Accuracy
+    plt.figure(figsize=(10, 5))
+    plt.plot(accuracies, label='Accuracy', linewidth=2)
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.grid(False)  # Desativa as gridlines
+    plt.savefig(str("./results/neural_networks/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
 
 
 
 
-def test(net):
+def test(net, testloader):
     """Validate the model on the test set."""
     criterion = torch.nn.CrossEntropyLoss()
     correct, total, loss = 0, 0, 0.0
@@ -260,13 +305,13 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-#net = LSTMModel(input_size=49, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
-#trainloader, testloader = load_data()
-#train(net, trainloader, 200)
-#test(net, testloader)
+net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+trainloader, testloader = load_data()
+train(net, trainloader, 50)
+test(net, testloader)
 
 
-
+'''
 if __name__ == '__main__':
 
     # -------------------------------------------------------------------------
@@ -278,9 +323,9 @@ if __name__ == '__main__':
 
     # --- Parameters ----------------------------------------------------------
     n_epochs = 50                         # Number of training epochs
-    batch_size_train = 64                 # Batch size for training data 64
-    batch_size_test = 64                # Batch size for testing data 1000
-    number_of_trials = 30                # Number of Optuna trials 100
+    batch_size_train = 64                 # Batch size for training data
+    batch_size_test = 1000                # Batch size for testing data
+    number_of_trials = 100                # Number of Optuna trials
     limit_obs = True                      # Limit number of observations for faster computation
 
     # *** Note: For more accurate results, do not limit the observations.
@@ -344,3 +389,4 @@ if __name__ == '__main__':
     print('\nMost important hyperparameters:')
     for key, value in most_important_parameters.items():
         print('  {}:{}{:.2f}%'.format(key, (15-len(key))*' ', value*100))
+'''

@@ -243,6 +243,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     examples = [num_examples for num_examples, _ in metrics]
 
     # Aggregate and return custom metric (weighted average)
+    print(f"\n### Server-side evaluation accuracy: "+str(float(sum(accuracies) / sum(examples))))
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 _, testloader = create_federated_testloader()
@@ -266,12 +267,12 @@ def evaluate(
 # Define strategy
 strategy = fl.server.strategy.FedAvg(
     fraction_fit=1.0,
-    fraction_evaluate=0.5,
+    fraction_evaluate=1.0,
     min_fit_clients=3,
     min_evaluate_clients=3,
     min_available_clients=3,
-    evaluate_fn=evaluate,
-    #evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
+    #evaluate_fn=evaluate,
+    evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
 )
 
 
