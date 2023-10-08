@@ -124,19 +124,73 @@ def column_remover(dataframe):
     print("Dataset cleaned!")
     return dataframe
 
-def create_federated_testloader():
-    # Leia o arquivo CSV em um DataFrame
-    df = pd.read_csv('../dataset/extended_fed_tester/dataframe_final.csv')
+def remove_spaces(column_name):
+    return column_name.strip()
 
-    # Crie o primeiro DataFrame com as primeiras 49 colunas
-    X_test = df.iloc[:, :49]
+def create_federated_testloader(dataset_id):
+    if dataset_id == 1:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
+    elif dataset_id == 2:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
+    elif dataset_id == 3:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
+    elif dataset_id == 4:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+    elif dataset_id == 5:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+    elif dataset_id == 6:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
+    elif dataset_id == 7:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
 
-    # Crie o segundo DataFrame com a última coluna
-    y_test = df.iloc[:, -1]
+    df = pd.read_csv(data_dir)
+    # df = column_remover(df)
+    df.columns = df.columns.map(remove_spaces)
 
-    X_test = torch.tensor(X_test.to_numpy(), dtype=torch.float32)
-    y_test = torch.tensor(y_test.values, dtype=torch.int64)
+    df['Label'] = df['Label'].apply(lambda x: 'MALIGNANT' if x != 'BENIGN' else x)
 
+    # Separar as colunas de recursos (features) e rótulos (labels)
+    X = df.drop('Label', axis=1)  # Substitua 'label' pelo nome da coluna de rótulos
+    y = df['Label']
+
+    # Dividir os dados em conjuntos de treinamento e teste
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    X_train = X_train.replace([np.inf, -np.inf], np.nan)
+    X_test = X_test.replace([np.inf, -np.inf], np.nan)
+
+    X_train = X_train.fillna(0)
+    X_test = X_test.fillna(0)
+
+    # Crie um objeto LabelEncoder
+    label_encoder = LabelEncoder()
+
+    # Ajuste o LabelEncoder aos seus dados de classe (y_train)
+    y_train_encoded = label_encoder.fit_transform(y_train)
+    y_test_encoded = label_encoder.fit_transform(y_test)
+
+    # Crie um tensor PyTorch a partir dos valores codificados
+    y_train = torch.tensor(y_train_encoded, dtype=torch.int64)
+    y_test = torch.tensor(y_test_encoded, dtype=torch.int64)
+
+    # Padronizar os recursos (opcional, mas geralmente recomendado)
+    scaler = RobustScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    # Converter os dados para tensores PyTorch
+    X_train = torch.tensor(X_train, dtype=torch.float32)
+    X_test = torch.tensor(X_test, dtype=torch.float32)
+    # y_train = torch.tensor(y_train.values, dtype=torch.int64)
+    # y_test = torch.tensor(y_test.values, dtype=torch.int64)
 
     test_dataset = CustomDataset(X_test, y_test)
 
@@ -240,7 +294,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     print(f"\n### Server-side evaluation accuracy: "+str(float(sum(accuracies) / sum(examples))))
     return {"accuracy": sum(accuracies) / sum(examples)}
 
-_, testloader = create_federated_testloader()
+_, testloader = create_federated_testloader(1)
 net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
 
 # The `evaluate` function will be by Flower called after every round
@@ -250,12 +304,18 @@ def evaluate(
     config: Dict[str, fl.common.Scalar],
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
     net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
-    set_parameters(net, parameters)  # Update model with the latest parameters
-    loss, accuracy = test(net, testloader)
-    torch.save(net.state_dict(), 'server_model_aggregated.pth')
-    accuracy_percent = accuracy * 100  # Multiplica a precisão por 100 para obter o valor percentual
-    print(f"\n### Server-side evaluation loss {loss} / accuracy {accuracy_percent:.2f}% ###\n")
-    return loss, {"accuracy": accuracy}
+    acc = []
+    for i in range(7):
+        i = i + 1
+        print("VALOR DE I: "+str(i))
+        _, testloader = create_federated_testloader(i)
+        set_parameters(net, parameters)  # Update model with the latest parameters
+        loss, accuracy = test(net, testloader)
+        torch.save(net.state_dict(), "./results/cic-unb-models/"+str(i)+'_server_model_aggregated.pth')
+        accuracy_percent = accuracy * 100  # Multiplica a precisão por 100 para obter o valor percentual
+        acc.append(accuracy_percent)
+        print(f"\n### Server-side evaluation loss {loss} / accuracy {accuracy_percent:.2f}% DatasetID {i} ###\n")
+    return loss, {"accuracy": (sum(acc)/len(acc))}
 
 
 # Define strategy
@@ -265,8 +325,8 @@ strategy = fl.server.strategy.FedAvg(
     min_fit_clients=7,
     min_evaluate_clients=7,
     min_available_clients=7,
-    #evaluate_fn=evaluate,
-    evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
+    evaluate_fn=evaluate,
+    #evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
 )
 
 
