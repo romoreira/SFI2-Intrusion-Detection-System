@@ -261,7 +261,7 @@ def train(net, trainloader, epochs):
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("./results/neural_networks/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
+    plt.savefig(str("./results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
 
     # Plotar o gráfico de Accuracy
     plt.figure(figsize=(10, 5))
@@ -270,7 +270,7 @@ def train(net, trainloader, epochs):
     plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("./results/neural_networks/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
+    plt.savefig(str("./results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
 
 
 def test(net, testloader):
