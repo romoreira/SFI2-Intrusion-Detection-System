@@ -72,10 +72,11 @@ class LSTMModel(nn.Module):
         self.hidden_layer = nn.Linear(hidden_size, hidden_size)
         self.output_layer = nn.Linear(hidden_size, output_size)
         self.activation = nn.ReLU()
+        self.dropout = nn.Dropout(0.2)
 
     def forward(self, x):
         x = self.activation(self.input_layer(x))
-        x = self.activation(self.hidden_layer(x))
+        x = self.dropout(x)  # Aplicar o dropout após a ativação
         x = self.output_layer(x)
         # Aplicar a função Softmax na camada de saída
         x = nn.functional.softmax(x, dim=1)
@@ -295,7 +296,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 _, testloader = create_federated_testloader(1)
-net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
 
 # The `evaluate` function will be by Flower called after every round
 def evaluate(
@@ -303,7 +304,7 @@ def evaluate(
     parameters: fl.common.NDArrays,
     config: Dict[str, fl.common.Scalar],
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
-    net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+    net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
     acc = []
     for i in range(7):
         i = i + 1
@@ -315,6 +316,7 @@ def evaluate(
         accuracy_percent = accuracy * 100  # Multiplica a precisão por 100 para obter o valor percentual
         acc.append(accuracy_percent)
         print(f"\n### Server-side evaluation loss {loss} / accuracy {accuracy_percent:.2f}% DatasetID {i} ###\n")
+    print(f"\n## Final Server-Side Acc: "+str((sum(acc) / len(acc))))
     return loss, {"accuracy": (sum(acc)/len(acc))}
 
 
@@ -322,11 +324,11 @@ def evaluate(
 strategy = fl.server.strategy.FedAvg(
     fraction_fit=1.0,
     fraction_evaluate=1.0,
-    min_fit_clients=7,
-    min_evaluate_clients=7,
-    min_available_clients=7,
-    evaluate_fn=evaluate,
-    #evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
+    min_fit_clients=3,
+    min_evaluate_clients=3,
+    min_available_clients=3,
+    #evaluate_fn=evaluate,
+    evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
 )
 
 

@@ -70,10 +70,11 @@ class LSTMModel(nn.Module):
         self.hidden_layer = nn.Linear(hidden_size, hidden_size)
         self.output_layer = nn.Linear(hidden_size, output_size)
         self.activation = nn.ReLU()
+        self.dropout = nn.Dropout(0.2)
 
     def forward(self, x):
         x = self.activation(self.input_layer(x))
-        x = self.activation(self.hidden_layer(x))
+        x = self.dropout(x)  # Aplicar o dropout após a ativação
         x = self.output_layer(x)
         # Aplicar a função Softmax na camada de saída
         x = nn.functional.softmax(x, dim=1)
@@ -300,7 +301,7 @@ def load_data():
 # #############################################################################
 
 
-net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
 trainloader, testloader = load_data()
 
 
