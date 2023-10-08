@@ -230,8 +230,8 @@ def train(net, trainloader, epochs):
 
 
     #optimizer = torch.optim.RMSprop(net.parameters(), lr=args.lr, momentum=0.9)
-    optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
-    #optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
+    #optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
+    optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
