@@ -306,9 +306,7 @@ def evaluate(
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
     net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
     acc = []
-    for i in range(7):
-        i = 3
-        print("VALOR DE I: "+str(i))
+    for i in range(3, 6):
         _, testloader = create_federated_testloader(i)
         set_parameters(net, parameters)  # Update model with the latest parameters
         loss, accuracy = test(net, testloader)
