@@ -72,7 +72,7 @@ class LSTMModel(nn.Module):
         self.hidden_layer = nn.Linear(hidden_size, hidden_size)
         self.output_layer = nn.Linear(hidden_size, output_size)
         self.activation = nn.ReLU()
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.2)
 
     def forward(self, x):
         x = self.activation(self.input_layer(x))

@@ -70,7 +70,7 @@ class LSTMModel(nn.Module):
         self.hidden_layer = nn.Linear(hidden_size, hidden_size)
         self.output_layer = nn.Linear(hidden_size, output_size)
         self.activation = nn.ReLU()
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.2)
 
     def forward(self, x):
         x = self.activation(self.input_layer(x))
@@ -257,7 +257,7 @@ def train(net, trainloader, epochs):
 
     # Plotar o gráfico de Loss
     plt.figure(figsize=(10, 5))
-    plt.plot(losses, label='Loss', linewidth=2)
+    plt.plot(range(1, int(len(losses) + 1)), losses, label='Loss', linewidth=2)
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.legend()
@@ -266,7 +266,7 @@ def train(net, trainloader, epochs):
 
     # Plotar o gráfico de Accuracy
     plt.figure(figsize=(10, 5))
-    plt.plot(accuracies, label='Accuracy', linewidth=2)
+    plt.plot(range(1, int(len(accuracies) + 1)), accuracies, label='Accuracy', linewidth=2)
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
     plt.legend()
