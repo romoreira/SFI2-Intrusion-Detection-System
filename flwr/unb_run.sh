@@ -8,7 +8,7 @@ sleep 3
 #python3 unb_client.py --dataset_id 2 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD &
 python3 unb_client.py --dataset_id 3 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD &
 python3 unb_client.py --dataset_id 4 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD &
-#python3 unb_client.py --dataset_id 5 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD &
-python3 unb_client.py --dataset_id 6 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD &
-#python3 unb_client.py --dataset_id 7 --epochs 20 --batch_size 32 --lr 0.01 --optim SGD &
+python3 unb_client.py --dataset_id 5 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD &
+#python3 unb_client.py --dataset_id 6 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD &
+#python3 unb_client.py --dataset_id 7 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD &
 
