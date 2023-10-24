@@ -139,16 +139,19 @@ def load_dataset(dataset_id):
         data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
     elif dataset_id == 4:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+        #data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+        data_dir = ""
     elif dataset_id == 5:
         # Caminho para o diretório do conjunto de dados
         data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
     elif dataset_id == 6:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
+        #data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
+        data_dir = ""
     elif dataset_id == 7:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+        #data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+        data_dir = ""
 
 
     df = pd.read_csv(data_dir)

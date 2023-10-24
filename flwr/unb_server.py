@@ -322,9 +322,9 @@ def evaluate(
 strategy = fl.server.strategy.FedAvg(
     fraction_fit=1.0,
     fraction_evaluate=1.0,
-    min_fit_clients=3,
-    min_evaluate_clients=3,
-    min_available_clients=3,
+    min_fit_clients=4,
+    min_evaluate_clients=4,
+    min_available_clients=4,
     evaluate_fn=evaluate,
     #evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
 )
