@@ -337,3 +337,6 @@ fl.server.start_server(
     config=fl.server.ServerConfig(num_rounds=3),
     strategy=strategy
 )
+
+
+torch.save(net.state_dict(), "./results/cic-unb-models/cic_unb_server_model_aggregated.pth")

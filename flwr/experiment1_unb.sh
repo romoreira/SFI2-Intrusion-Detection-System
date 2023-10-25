@@ -15,7 +15,7 @@ for i in {2..10}; do
 
   # Iniciar os clientes e redirecionar a saída para o mesmo arquivo de log
   python3 unb_client.py --dataset_id 1 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
-  python3 unb_client.py --dataset_id 2 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
+  python3 unb_client.py --dataset_id 2 --epochs 20 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
   python3 unb_client.py --dataset_id 3 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
   python3 unb_client.py --dataset_id 5 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
 
