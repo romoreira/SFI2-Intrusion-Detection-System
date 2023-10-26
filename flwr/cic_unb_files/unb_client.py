@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import RobustScaler
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+import time
 
 # #############################################################################
 # 1. Regular PyTorch pipeline: nn.Module, train, test, and DataLoader
@@ -232,11 +233,14 @@ def train(net, trainloader, epochs):
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
     net.train()
+    end_time = 0
+    start_time = time.time()
     for epoch in range(epochs):
         correct, total, epoch_loss = 0, 0, 0.0
         for X, y in tqdm(trainloader):
             optimizer.zero_grad()
             loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
+            end_time = time.time()
             loss.backward()
             optimizer.step()
             epoch_loss += loss
@@ -271,6 +275,7 @@ def train(net, trainloader, epochs):
     plt.grid(False)  # Desativa as gridlines
     plt.savefig(str("../results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
 
+    print(f"Total Training Time: {end_time - start_time} segundos - dataset_id: "+str(args.dataset_id))
 
 def test(net, testloader):
     """Validate the model on the test set."""

@@ -1,5 +1,5 @@
 from typing import List, Tuple
-
+import time
 import flwr as fl
 from flwr.common import Metrics
 from sklearn.model_selection import train_test_split
