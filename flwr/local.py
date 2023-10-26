@@ -39,33 +39,22 @@ class CustomDataset(Dataset):
         return x_sample, y_sample
 
 
+#CNN de Teste para o problema binário
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
-        # Camada de entrada
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
-
-        # Adicionando 20 camadas intermediárias
-        self.hidden_layers = nn.ModuleList([
-            nn.Linear(hidden_size, hidden_size) for _ in range(10)
-        ])
-
-        # Camada de saída
-        self.fc_final = nn.Linear(hidden_size, output_size)
+        self.input_layer = nn.Linear(input_size, hidden_size)
+        self.hidden_layer = nn.Linear(hidden_size, hidden_size)
+        self.output_layer = nn.Linear(hidden_size, output_size)
+        self.activation = nn.ReLU()
+        self.dropout = nn.Dropout(0.4)
 
     def forward(self, x):
-        # Camada de entrada
-        x = self.fc1(x)
-        x = self.relu(x)
-
-        # Passando pelos módulos intermediários
-        for layer in self.hidden_layers:
-            x = layer(x)
-            x = self.relu(x)
-
-        # Camada de saída
-        x = self.fc_final(x)
+        x = self.activation(self.input_layer(x))
+        x = self.dropout(x)  # Aplicar o dropout após a ativação
+        x = self.output_layer(x)
+        # Aplicar a função Softmax na camada de saída
+        x = nn.functional.softmax(x, dim=1)
         return x
 
 
@@ -160,7 +149,7 @@ def load_dataset(dataset_id):
 
     if dataset_id == 1:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/extended/output_bottom.csv"
+        data_dir = "../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
     elif dataset_id == 2:
         # Caminho para o diretório do conjunto de dados
         data_dir = "../dataset/extended/output_left.csv"
@@ -329,10 +318,16 @@ if __name__ == '__main__':
 
     # Save results to csv file
     df = study.trials_dataframe().drop(['datetime_start', 'datetime_complete', 'duration'], axis=1)  # Exclude columns
-    df = df.loc[df['state'] == 'COMPLETE']        # Keep only results that did not prune
-    df = df.drop('state', axis=1)                 # Exclude state column
-    df = df.sort_values('value')                  # Sort based on accuracy
-    df.to_csv('./results/'+str(args.dataset_id)+'_optuna_results.csv', index=False)  # Save to csv file
+    df = df.loc[df['state'] == 'COMPLETE']  # Keep only results that did not prune
+    df = df.drop('state', axis=1)  # Exclude state column
+    df = df.sort_values('value')  # Sort based on accuracy
+
+    # Add best trial value and params to the dataframe
+    df['best_trial_value'] = trial.value
+    for key, value in trial.params.items():
+        df['best_trial_param_{}'.format(key)] = value
+
+    df.to_csv('./results/' + str(args.dataset_id) + '_optuna_results.csv', index=False)  # Save to csv file
 
     # Display results in a dataframe
     print("\nOverall Results (ordered by accuracy):\n {}".format(df))
