@@ -131,25 +131,25 @@ def remove_spaces(column_name):
 def create_federated_testloader(dataset_id):
     if dataset_id == 1:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
     elif dataset_id == 2:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
     elif dataset_id == 3:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
     elif dataset_id == 4:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
     elif dataset_id == 5:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
     elif dataset_id == 6:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
     elif dataset_id == 7:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
 
     df = pd.read_csv(data_dir)
     # df = column_remover(df)
@@ -306,11 +306,12 @@ def evaluate(
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
     net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
     acc = []
-    for i in range(3, 6):
+    datasets = [1, 2, 3, 5]
+    for i in datasets:
         _, testloader = create_federated_testloader(i)
         set_parameters(net, parameters)  # Update model with the latest parameters
         loss, accuracy = test(net, testloader)
-        torch.save(net.state_dict(), "./results/cic-unb-models/"+str(i)+'_server_model_aggregated.pth')
+        torch.save(net.state_dict(), "../results/cic-unb-models/"+str(i)+'_server_model_aggregated.pth')
         accuracy_percent = accuracy * 100  # Multiplica a precisão por 100 para obter o valor percentual
         acc.append(accuracy_percent)
         print(f"\n### Server-side evaluation loss {loss} / accuracy {accuracy_percent:.2f}% DatasetID {i} ###\n")
@@ -339,4 +340,4 @@ fl.server.start_server(
 )
 
 
-torch.save(net.state_dict(), "./results/cic-unb-models/cic_unb_server_model_aggregated.pth")
+torch.save(net.state_dict(), "../results/cic-unb-models/cic_unb_server_model_aggregated.pth")

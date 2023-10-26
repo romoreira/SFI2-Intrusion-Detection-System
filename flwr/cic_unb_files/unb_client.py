@@ -139,21 +139,16 @@ def load_dataset(dataset_id):
         data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
     elif dataset_id == 4:
         # Caminho para o diretório do conjunto de dados
-        #data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
-        data_dir = ""
+        data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
     elif dataset_id == 5:
         # Caminho para o diretório do conjunto de dados
         data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
     elif dataset_id == 6:
         # Caminho para o diretório do conjunto de dados
-        #data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
-        data_dir = ""
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
     elif dataset_id == 7:
         # Caminho para o diretório do conjunto de dados
-        #data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
-        data_dir = ""
-
-
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
     df = pd.read_csv(data_dir)
     #df = column_remover(df)
     df.columns = df.columns.map(remove_spaces)
@@ -260,9 +255,9 @@ def train(net, trainloader, epochs):
 
     # Plotar o gráfico de Loss
     plt.figure(figsize=(10, 5))
-    plt.plot(range(1, int(len(losses) + 1)), losses, label='Loss', linewidth=2)
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
+    plt.plot(range(1, int(len(losses) + 1)), losses, label='Loss', linewidth=2, color='orange')
+    plt.xlabel('Epoch', fontsize=18)
+    plt.ylabel('Loss', fontsize=18)
     plt.legend()
     plt.grid(False)  # Desativa as gridlines
     plt.savefig(str("../results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
@@ -270,8 +265,8 @@ def train(net, trainloader, epochs):
     # Plotar o gráfico de Accuracy
     plt.figure(figsize=(10, 5))
     plt.plot(range(1, int(len(accuracies) + 1)), accuracies, label='Accuracy', linewidth=2)
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch', fontsize=18)
+    plt.ylabel('Accuracy', fontsize=18)
     plt.legend()
     plt.grid(False)  # Desativa as gridlines
     plt.savefig(str("../results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
