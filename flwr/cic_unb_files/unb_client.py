@@ -130,27 +130,27 @@ def load_dataset(dataset_id):
 
     if dataset_id == 1:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
     elif dataset_id == 2:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
     elif dataset_id == 3:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
     elif dataset_id == 4:
         # Caminho para o diretório do conjunto de dados
-        #data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+        #data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
         data_dir = ""
     elif dataset_id == 5:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
     elif dataset_id == 6:
         # Caminho para o diretório do conjunto de dados
-        #data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
+        #data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
         data_dir = ""
     elif dataset_id == 7:
         # Caminho para o diretório do conjunto de dados
-        #data_dir = "../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+        #data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
         data_dir = ""
 
 
@@ -265,7 +265,7 @@ def train(net, trainloader, epochs):
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("./results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
+    plt.savefig(str("../results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
 
     # Plotar o gráfico de Accuracy
     plt.figure(figsize=(10, 5))
@@ -274,7 +274,7 @@ def train(net, trainloader, epochs):
     plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("./results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
+    plt.savefig(str("../results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
 
 
 def test(net, testloader):

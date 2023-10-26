@@ -5,7 +5,7 @@ mkdir -p ./results/cic-unb/logs
 
 # Loop para executar o script 10 vezes
 for i in {2..10}; do
-  log_file="./results/cic-unb/logs/log_$i.txt"  # Nome do arquivo de log com caminho
+  log_file="../results/cic-unb/logs/log_$i.txt"  # Nome do arquivo de log com caminho
 
   # Iniciar o servidor e redirecionar a saída para o arquivo de log
   python3 unb_server.py --world_size 5 --dataset_id 1 --lr 0.001 &> "$log_file" &
