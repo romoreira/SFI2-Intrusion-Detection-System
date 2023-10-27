@@ -314,7 +314,7 @@ def evaluate(
         torch.save(net.state_dict(), "../results/cic-unb-models/"+str(i)+'_server_model_aggregated.pth')
         accuracy_percent = accuracy * 100  # Multiplica a precisão por 100 para obter o valor percentual
         acc.append(accuracy_percent)
-        print(f"\n### Server-side evaluation loss {loss} / accuracy {accuracy_percent:.2f}% DatasetID {i} ###\n")
+        print(f"\n### Server-side evaluation loss {loss} / accuracy {accuracy_percent:.2f}% using DatasetID: {i} ###\n")
     print(f"\n## Final Server-Side Acc: "+str((sum(acc) / len(acc))))
     return loss, {"accuracy": (sum(acc)/len(acc))}
 

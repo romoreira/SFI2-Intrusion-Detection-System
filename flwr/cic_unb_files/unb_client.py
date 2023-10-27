@@ -240,7 +240,7 @@ def train(net, trainloader, epochs):
         for X, y in tqdm(trainloader):
             optimizer.zero_grad()
             loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
-            end_time = time.time()
+
             loss.backward()
             optimizer.step()
             epoch_loss += loss
@@ -256,6 +256,8 @@ def train(net, trainloader, epochs):
 
         losses.append(epoch_loss.item())  # Adicione o valor de perda à lista
         accuracies.append(epoch_acc)  # Adicione o valor de acurácia à lista
+
+    end_time = time.time()
 
     # Plotar o gráfico de Loss
     plt.figure(figsize=(10, 5))
