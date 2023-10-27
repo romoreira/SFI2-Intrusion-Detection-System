@@ -17,6 +17,7 @@ from sklearn.preprocessing import RobustScaler
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import time
+import sys
 
 # #############################################################################
 # 1. Regular PyTorch pipeline: nn.Module, train, test, and DataLoader
@@ -277,7 +278,9 @@ def train(net, trainloader, epochs):
     plt.grid(False)  # Desativa as gridlines
     plt.savefig(str("../results/cic-unb/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
 
-    print(f"Total Training Time: {end_time - start_time} segundos - dataset_id: "+str(args.dataset_id))
+    with open("../results/cic-unb/logs/trainig_time_"+str(args.dataset_id)+".txt", 'a') as f:
+        # Agora, quando você usa a função print com o argumento file, a saída será escrita no arquivo
+        print(f"Total Training Time: {end_time - start_time} seconds - dataset_id: " + str(args.dataset_id), file=f)
 
 def test(net, testloader):
     """Validate the model on the test set."""
