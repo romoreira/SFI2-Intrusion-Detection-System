@@ -306,7 +306,7 @@ def evaluate(
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
     net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
     acc = []
-    datasets = [1, 2, 3, 5]
+    datasets = [1, 2, 3, 4, 5, 6, 7]
     for i in datasets:
         _, testloader = create_federated_testloader(i)
         set_parameters(net, parameters)  # Update model with the latest parameters

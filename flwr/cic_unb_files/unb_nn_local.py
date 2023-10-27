@@ -42,6 +42,7 @@ class CustomDataset(Dataset):
         return x_sample, y_sample
 
 
+#CNN de Teste para o problema binário
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
@@ -49,10 +50,11 @@ class LSTMModel(nn.Module):
         self.hidden_layer = nn.Linear(hidden_size, hidden_size)
         self.output_layer = nn.Linear(hidden_size, output_size)
         self.activation = nn.ReLU()
+        self.dropout = nn.Dropout(0.4)
 
     def forward(self, x):
         x = self.activation(self.input_layer(x))
-        x = self.activation(self.hidden_layer(x))
+        x = self.dropout(x)  # Aplicar o dropout após a ativação
         x = self.output_layer(x)
         # Aplicar a função Softmax na camada de saída
         x = nn.functional.softmax(x, dim=1)
@@ -114,17 +116,18 @@ def objective(trial):
     """
 
 
-    num_layers = trial.suggest_int("num_layers", 5, 100, 100)  # Number of neurons of FC1 layer
-    hidden_size = trial.suggest_int("hidden_size", 32, 64, 128)     # Dropout for convolutional layer 2
+    #num_layers = trial.suggest_int("num_layers", 5, 30, 100)  # Number of neurons of FC1 layer 5, 100, 100
+    #hidden_size = trial.suggest_int("hidden_size", 32, 64, 128)     # Dropout for convolutional layer 2
+    num_layers = 5
+    hidden_size = 16
 
-
-    # Generate the model
-    model = LSTMModel(input_size=49, hidden_size=hidden_size, num_layers=num_layers, output_size=32).to(DEVICE)
+    # Generate the model input_size 49
+    model = LSTMModel(input_size=78, hidden_size=hidden_size, num_layers=num_layers, output_size=2).to(DEVICE)
 
 
     # Generate the optimizers
     optimizer_name = trial.suggest_categorical("optimizer", ["Adam", "RMSprop", "SGD"])  # Optimizers
-    lr = trial.suggest_float("lr", 0.0001, 0.1, log=True) # Learning rates
+    lr = trial.suggest_float("lr", 0.0001, 0.001, log=True) # Learning rates 0.0001, 0.1
     optimizer = getattr(optim, optimizer_name)(model.parameters(), lr=lr)
 
     # Training of the model
@@ -140,21 +143,33 @@ def objective(trial):
 
     return accuracy
 
+
 def remove_spaces(column_name):
     return column_name.strip()
 
 def load_dataset(dataset_id):
 
-
     if dataset_id == 1:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
     elif dataset_id == 2:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
     elif dataset_id == 3:
         # Caminho para o diretório do conjunto de dados
-        data_dir = "../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
+        data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
+    elif dataset_id == 4:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+    elif dataset_id == 5:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+    elif dataset_id == 6:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
+    elif dataset_id == 7:
+        # Caminho para o diretório do conjunto de dados
+        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
 
     df = pd.read_csv(data_dir)
     #df = column_remover(df)
@@ -223,62 +238,27 @@ def create_loaders(X_train, X_test, y_train, y_test):
     return train_loader, test_loader
 
 
-def train(net, trainloader, epochs):
+def train(net, optimizer):
     """Train the model on the training set."""
-    print("Starting Client training for " + str(epochs) + " epochs")
-    criterion = torch.nn.CrossEntropyLoss()
-
-
-    #optimizer = torch.optim.RMSprop(net.parameters(), lr=args.lr, momentum=0.9)
-    #optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
-    optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
 
     losses = []  # Lista para armazenar os valores de perda
     accuracies = []  # Lista para armazenar os valores de acurácia
-    net.train()
-    for epoch in range(epochs):
-        correct, total, epoch_loss = 0, 0, 0.0
-        for X, y in tqdm(trainloader):
-            optimizer.zero_grad()
-            loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
-            loss.backward()
-            optimizer.step()
-            epoch_loss += loss
+    criterion = torch.nn.CrossEntropyLoss()
+    correct, total, epoch_loss = 0, 0, 0.0
+    for X, y in tqdm(trainloader):
+        optimizer.zero_grad()
+        loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
+        loss.backward()
+        optimizer.step()
+        epoch_loss += loss
 
-            # Atualize o número de previsões corretas e o total
-            _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
-            total += y.size(0)
-            correct += (predicted == y.to(DEVICE)).sum().item()
-
-        epoch_loss /= len(trainloader.dataset)
-        epoch_acc = correct / total  # Calcule a acurácia aqui, dentro do loop externo
-        print(f"Epoch {epoch + 1}: train loss {epoch_loss}, accuracy: {round(float(epoch_acc) * 100, 2)}%")
-
-        losses.append(epoch_loss.item())  # Adicione o valor de perda à lista
-        accuracies.append(epoch_acc)  # Adicione o valor de acurácia à lista
-
-    # Plotar o gráfico de Loss
-    plt.figure(figsize=(10, 5))
-    plt.plot(losses, label='Loss', linewidth=2)
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("./results/neural_networks/")+str("client_")+str(args.dataset_id)+"_TRAIN_LOSS.pdf")
-
-    # Plotar o gráfico de Accuracy
-    plt.figure(figsize=(10, 5))
-    plt.plot(accuracies, label='Accuracy', linewidth=2)
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    plt.grid(False)  # Desativa as gridlines
-    plt.savefig(str("./results/neural_networks/")+str("client_")+str(args.dataset_id)+"_TRAIN_ACC.pdf")
+        # Atualize o número de previsões corretas e o total
+        _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
+        total += y.size(0)
+        correct += (predicted == y.to(DEVICE)).sum().item()
 
 
-
-
-def test(net, testloader):
+def test(net):
     """Validate the model on the test set."""
     criterion = torch.nn.CrossEntropyLoss()
     correct, total, loss = 0, 0, 0.0
@@ -305,13 +285,13 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
-trainloader, testloader = load_data()
-train(net, trainloader, 50)
-test(net, testloader)
+#net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
+#trainloader, testloader = load_data()
+#train(net, trainloader, 50)
+#test(net, testloader)
 
 
-'''
+
 if __name__ == '__main__':
 
     # -------------------------------------------------------------------------
@@ -377,7 +357,14 @@ if __name__ == '__main__':
     df = df.loc[df['state'] == 'COMPLETE']        # Keep only results that did not prune
     df = df.drop('state', axis=1)                 # Exclude state column
     df = df.sort_values('value')                  # Sort based on accuracy
-    df.to_csv('./results/'+str(args.dataset_id)+'_optuna_results.csv', index=False)  # Save to csv file
+    df.to_csv('../results/cic-unb/optimization/'+str(args.dataset_id)+'_optuna_results.csv', index=False)  # Save to csv file
+
+    # Add best trial value and params to the dataframe
+    df['best_trial_value'] = trial.value
+    for key, value in trial.params.items():
+        df['best_trial_param_{}'.format(key)] = value
+
+    df.to_csv('../results/cic-unb/optimization/' + str(args.dataset_id) + '_optuna_results.csv', mode='a', header=False, index=False)  # Save to csv file
 
     # Display results in a dataframe
     print("\nOverall Results (ordered by accuracy):\n {}".format(df))
@@ -389,4 +376,3 @@ if __name__ == '__main__':
     print('\nMost important hyperparameters:')
     for key, value in most_important_parameters.items():
         print('  {}:{}{:.2f}%'.format(key, (15-len(key))*' ', value*100))
-'''
