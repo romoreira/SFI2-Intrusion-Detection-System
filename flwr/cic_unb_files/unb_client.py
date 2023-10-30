@@ -341,3 +341,5 @@ fl.client.start_numpy_client(
     server_address="127.0.0.1:8080",
     client=FlowerClient(),
 )
+
+torch.save(net.state_dict(), "../results/cic-unb-models/"+str(args.dataset_id)+"_cic_unb_client_model_aggregated.pth")

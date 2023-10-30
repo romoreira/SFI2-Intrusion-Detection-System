@@ -311,7 +311,7 @@ def evaluate(
         _, testloader = create_federated_testloader(i)
         set_parameters(net, parameters)  # Update model with the latest parameters
         loss, accuracy = test(net, testloader)
-        torch.save(net.state_dict(), "../results/cic-unb-models/"+str(i)+'_server_model_aggregated.pth')
+        #torch.save(net.state_dict(), "../results/cic-unb-models/"+str(i)+'_server_model_aggregated.pth')
         accuracy_percent = accuracy * 100  # Multiplica a precisão por 100 para obter o valor percentual
         acc.append(accuracy_percent)
         print(f"\n### Server-side evaluation loss {loss} / accuracy {accuracy_percent:.2f}% using DatasetID: {i} ###\n")
@@ -323,9 +323,9 @@ def evaluate(
 strategy = fl.server.strategy.FedAvg(
     fraction_fit=1.0,
     fraction_evaluate=1.0,
-    min_fit_clients=4,
-    min_evaluate_clients=4,
-    min_available_clients=4,
+    min_fit_clients=7,
+    min_evaluate_clients=7,
+    min_available_clients=7,
     evaluate_fn=evaluate,
     #evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
 )
