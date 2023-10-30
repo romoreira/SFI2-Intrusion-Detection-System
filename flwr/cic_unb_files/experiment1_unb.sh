@@ -14,10 +14,10 @@ for i in {1..10}; do
   sleep 10  # Aguardar um pouco antes de iniciar os clientes
 
   # Iniciar os clientes e redirecionar a saída para o mesmo arquivo de log
-  python3 unb_client.py --dataset_id 1 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
-  python3 unb_client.py --dataset_id 2 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
-  python3 unb_client.py --dataset_id 3 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
-  python3 unb_client.py --dataset_id 5 --epochs 10 --batch_size 32 --lr 0.001 --optim SGD >> "$log_file" &
+  python3 unb_client.py --dataset_id 1 --epochs 10 --batch_size 32 --lr 0.0003074258400864182 --optim Adam >> "$log_file" &
+  python3 unb_client.py --dataset_id 2 --epochs 10 --batch_size 32 --lr 0.0005025961155459187 --optim RMSprop >> "$log_file" &
+  python3 unb_client.py --dataset_id 3 --epochs 10 --batch_size 32 --lr 0.00010603472201401003 --optim RMSprop >> "$log_file" &
+  python3 unb_client.py --dataset_id 5 --epochs 10 --batch_size 32 --lr 0.000587441102433824 --optim RMSprop >> "$log_file" &
 
   # Esperar que o servidor e os clientes terminem antes de prosseguir
   wait "$server_pid"
