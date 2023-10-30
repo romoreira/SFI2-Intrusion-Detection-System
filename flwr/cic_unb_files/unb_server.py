@@ -326,8 +326,8 @@ strategy = fl.server.strategy.FedAvg(
     min_fit_clients=7,
     min_evaluate_clients=7,
     min_available_clients=7,
-    evaluate_fn=evaluate,
-    #evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
+    #evaluate_fn=evaluate,
+    evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
 )
 
 
