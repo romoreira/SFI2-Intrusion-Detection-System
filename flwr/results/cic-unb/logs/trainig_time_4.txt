@@ -58,3 +58,7 @@ Total Training Time: 197.24385619163513 seconds - dataset_id: 4
 Total Training Time: 200.34095573425293 seconds - dataset_id: 4
 Total Training Time: 203.4399950504303 seconds - dataset_id: 4
 Total Training Time: 200.0906627178192 seconds - dataset_id: 4
+Total Training Time: 217.49667477607727 seconds - dataset_id: 4
+Total Training Time: 215.69768524169922 seconds - dataset_id: 4
+Total Training Time: 209.50888466835022 seconds - dataset_id: 4
+Total Training Time: 215.19195079803467 seconds - dataset_id: 4
