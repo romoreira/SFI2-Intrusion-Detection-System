@@ -310,7 +310,7 @@ def evaluate(
     _, testloader = create_federated_testloader(1)
     loss, accuracy = test(net, testloader)
     set_parameters(net, parameters)
-    torch.save(net.state_dict(), "../results/cic-unb-models/final_server_model_aggregated.pth")
+    torch.save(net.state_dict(), "../results/cic-unb-models/server_model_aggregated.pth")
 
     datasets = [1, 2, 3, 4, 5, 6, 7]
     for i in datasets:

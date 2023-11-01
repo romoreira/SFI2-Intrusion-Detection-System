@@ -29,7 +29,7 @@ class LSTMModel(nn.Module):
 model1 = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2)
 
 # Carregar o estado do modelo
-state_dict1 = torch.load("../results/cic-unb-models/cic_unb_server_model_aggregated.pth")
+state_dict1 = torch.load("../results/cic-unb-models/final_server_model_aggregated.pth")
 
 # Carregar o estado no modelo
 model1.load_state_dict(state_dict1)
