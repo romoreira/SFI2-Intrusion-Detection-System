@@ -238,11 +238,9 @@ def create_loaders(X_train, X_test, y_train, y_test):
     return train_loader, test_loader
 
 
-def train(net, optimizer):
+def train(net, optimizer, train_loader):
     """Train the model on the training set."""
 
-    losses = []  # Lista para armazenar os valores de perda
-    accuracies = []  # Lista para armazenar os valores de acurácia
     criterion = torch.nn.CrossEntropyLoss()
     correct, total, epoch_loss = 0, 0, 0.0
     for X, y in tqdm(trainloader):
@@ -258,7 +256,7 @@ def train(net, optimizer):
         correct += (predicted == y.to(DEVICE)).sum().item()
 
 
-def test(net):
+def test(net, testloader):
     """Validate the model on the test set."""
     criterion = torch.nn.CrossEntropyLoss()
     correct, total, loss = 0, 0, 0.0
@@ -285,13 +283,20 @@ def load_data():
 # #############################################################################
 
 # Load model and data (simple CNN, CIFAR-10)
-#net = LSTMModel(input_size=78, hidden_size=128, num_layers=100, output_size=2).to(DEVICE)
-#trainloader, testloader = load_data()
-#train(net, trainloader, 50)
-#test(net, testloader)
+net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
+trainloader, testloader = load_data()
+
+# Training of the model
+
+optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
+for epoch in range(1):
+    train(net, optimizer, trainloader)  # Train the model
+    accuracy = test(net, testloader)  # Evaluate the model
+
+torch.save(net.state_dict(), "../results/cic-unb-models/local_training_dataset_"+str(args.dataset_id)+".pth")
 
 
-
+'''
 if __name__ == '__main__':
 
     # -------------------------------------------------------------------------
@@ -376,3 +381,4 @@ if __name__ == '__main__':
     print('\nMost important hyperparameters:')
     for key, value in most_important_parameters.items():
         print('  {}:{}{:.2f}%'.format(key, (15-len(key))*' ', value*100))
+'''

@@ -326,6 +326,8 @@ class FlowerClient(fl.client.NumPyClient):
     def fit(self, parameters, config):
         self.set_parameters(parameters)
         train(net, trainloader, epochs=args.epochs)
+        torch.save(net.state_dict(),
+                   "../results/cic-unb-models/" + str(args.dataset_id) + "_cic_unb_client_model_aggregated.pth")
         return self.get_parameters(config={}), len(trainloader.dataset), {}
 
     def evaluate(self, parameters, config):

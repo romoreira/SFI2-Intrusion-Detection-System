@@ -318,7 +318,7 @@ def evaluate(
         loss, accuracy = test(net, testloader)
         accuracy_percent = accuracy * 100  # Multiplica a precisão por 100 para obter o valor percentual
         acc.append(accuracy_percent)
-        print(f"\n### Loss {loss} and accuracy {accuracy_percent:.2f}% using DatasetID: {i} ###\n")
+        #print(f"\n### Loss {loss} and accuracy {accuracy_percent:.2f}% using DatasetID: {i} ###\n")
     print(f"\n## Final Server-Side Acc: "+str((sum(acc) / len(acc))))
     return loss, {"accuracy": (sum(acc)/len(acc))}
 
