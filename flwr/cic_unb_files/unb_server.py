@@ -241,7 +241,7 @@ def load_dataset(dataset_id):
 
     # Dividir os dados em conjuntos de treinamento e teste
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     # Padronizar os recursos (opcional, mas geralmente recomendado)
     scaler = StandardScaler()
@@ -306,12 +306,16 @@ def evaluate(
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
     net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
     acc = []
+
+    _, testloader = create_federated_testloader(1)
+    loss, accuracy = test(net, testloader)
+    set_parameters(net, parameters)
+    torch.save(net.state_dict(), "../results/cic-unb-models/final_server_model_aggregated.pth")
+
     datasets = [1, 2, 3, 4, 5, 6, 7]
     for i in datasets:
         _, testloader = create_federated_testloader(i)
-        set_parameters(net, parameters)  # Update model with the latest parameters
         loss, accuracy = test(net, testloader)
-        #torch.save(net.state_dict(), "../results/cic-unb-models/"+str(i)+'_server_model_aggregated.pth')
         accuracy_percent = accuracy * 100  # Multiplica a precisão por 100 para obter o valor percentual
         acc.append(accuracy_percent)
         print(f"\n### Loss {loss} and accuracy {accuracy_percent:.2f}% using DatasetID: {i} ###\n")
@@ -338,6 +342,3 @@ fl.server.start_server(
     config=fl.server.ServerConfig(num_rounds=10),
     strategy=strategy
 )
-
-
-torch.save(net.state_dict(), "../results/cic-unb-models/cic_unb_server_model_aggregated.pth")

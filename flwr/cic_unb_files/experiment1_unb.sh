@@ -17,14 +17,14 @@ for i in {1..10}; do
   python3 unb_client.py --dataset_id 1 --epochs 10 --batch_size 32 --lr 0.0003074258400864182 --optim Adam >> "$log_file" &
   python3 unb_client.py --dataset_id 2 --epochs 10 --batch_size 32 --lr 0.0005025961155459187 --optim RMSprop >> "$log_file" &
   python3 unb_client.py --dataset_id 3 --epochs 10 --batch_size 32 --lr 0.00010603472201401003 --optim RMSprop >> "$log_file" &
-  python3 unb_client.py --dataset_id 4 --epochs 10 --batch_size 32 --lr 0.00010603472201401003 --optim RMSprop >> "$log_file" &
+  python3 unb_client.py --dataset_id 4 --epochs 10 --batch_size 32 --lr 0.00013936442920558617 --optim Adam >> "$log_file" &
   python3 unb_client.py --dataset_id 5 --epochs 10 --batch_size 32 --lr 0.000587441102433824 --optim RMSprop >> "$log_file" &
-  python3 unb_client.py --dataset_id 6 --epochs 10 --batch_size 32 --lr 0.000587441102433824 --optim RMSprop >> "$log_file" &
-  python3 unb_client.py --dataset_id 7 --epochs 10 --batch_size 32 --lr 0.000587441102433824 --optim RMSprop >> "$log_file" &
+  python3 unb_client.py --dataset_id 6 --epochs 10 --batch_size 32 --lr 0.0006052967400865347 --optim SGD >> "$log_file" &
+  python3 unb_client.py --dataset_id 7 --epochs 10 --batch_size 32 --lr 0.00012091571705782663 --optim Adam >> "$log_file" &
 
   # Esperar que o servidor e os clientes terminem antes de prosseguir
   wait "$server_pid"
   ./clear_unb.sh
-  echo "FIM Primeiro Ciclo"
+  echo "FIM Ciclo"
   sleep 60
 done
