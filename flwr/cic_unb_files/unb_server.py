@@ -163,7 +163,7 @@ def create_federated_testloader(dataset_id):
 
     # Dividir os dados em conjuntos de treinamento e teste
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
     X_train = X_train.replace([np.inf, -np.inf], np.nan)
     X_test = X_test.replace([np.inf, -np.inf], np.nan)
@@ -241,7 +241,7 @@ def load_dataset(dataset_id):
 
     # Dividir os dados em conjuntos de treinamento e teste
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
     # Padronizar os recursos (opcional, mas geralmente recomendado)
     scaler = StandardScaler()
@@ -322,15 +322,37 @@ def evaluate(
     print(f"\n## Final Server-Side Acc: "+str((sum(acc) / len(acc))))
     return loss, {"accuracy": (sum(acc)/len(acc))}
 
+def default_evaluate(
+    server_round: int,
+    parameters: fl.common.NDArrays,
+    config: Dict[str, fl.common.Scalar],
+) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
+    net = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2).to(DEVICE)
+    _, valloader = create_federated_testloader(1)
+    set_parameters(net, parameters)  # Update model with the latest parameters
+    loss, accuracy = test(net, valloader)
+    print(f"Server-side evaluation loss {loss} / accuracy {accuracy}")
+    return loss, {"accuracy": accuracy}
+
+
+def simple_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
+    # Calculate the average accuracy of each client
+    accuracies = [m["accuracy"] for _, m in metrics]
+    average_accuracy = sum(accuracies) / len(accuracies)
+
+    # Return the average accuracy as the evaluation result
+    return {"accuracy": average_accuracy}
 
 # Define strategy
 strategy = fl.server.strategy.FedAvg(
-    fraction_fit=1.0,
-    fraction_evaluate=1.0,
+    fraction_fit=0.3,
+    fraction_evaluate=0.3,
     min_fit_clients=7,
     min_evaluate_clients=7,
     min_available_clients=7,
-    evaluate_fn=evaluate,
+    #evaluate_fn=evaluate,
+    evaluate_fn=default_evaluate,
+    #evaluate_fn=simple_average,
     #evaluate_metrics_aggregation_fn=weighted_average,  # <-- pass the metric aggregation function
 )
 
@@ -339,6 +361,6 @@ strategy = fl.server.strategy.FedAvg(
 # Start Flower server
 fl.server.start_server(
     server_address="0.0.0.0:8080",
-    config=fl.server.ServerConfig(num_rounds=10),
+    config=fl.server.ServerConfig(num_rounds=3),
     strategy=strategy
 )
