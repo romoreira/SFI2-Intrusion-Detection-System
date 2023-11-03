@@ -1,0 +1,14 @@
+Total Training Time: 462.14877438545227 seconds - dataset_id: 1
+Total Training Time: 456.21165227890015 seconds - dataset_id: 1
+Total Training Time: 447.63886427879333 seconds - dataset_id: 1
+Total Training Time: 453.35763716697693 seconds - dataset_id: 1
+Total Training Time: 453.90737080574036 seconds - dataset_id: 1
+Total Training Time: 454.2065749168396 seconds - dataset_id: 1
+Total Training Time: 458.44940972328186 seconds - dataset_id: 1
+Total Training Time: 455.2046880722046 seconds - dataset_id: 1
+Total Training Time: 455.89007449150085 seconds - dataset_id: 1
+Total Training Time: 454.7903301715851 seconds - dataset_id: 1
+Total Training Time: 460.2007520198822 seconds - dataset_id: 1
+Total Training Time: 463.79241132736206 seconds - dataset_id: 1
+Total Training Time: 458.18861842155457 seconds - dataset_id: 1
+Total Training Time: 461.1544075012207 seconds - dataset_id: 1

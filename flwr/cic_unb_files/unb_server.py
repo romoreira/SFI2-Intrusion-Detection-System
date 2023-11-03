@@ -72,7 +72,7 @@ class LSTMModel(nn.Module):
         self.hidden_layer = nn.Linear(hidden_size, hidden_size)
         self.output_layer = nn.Linear(hidden_size, output_size)
         self.activation = nn.ReLU()
-        self.dropout = nn.Dropout(0.4)
+        self.dropout = nn.Dropout(0.2)
 
     def forward(self, x):
         x = self.activation(self.input_layer(x))
@@ -361,6 +361,6 @@ strategy = fl.server.strategy.FedAvg(
 # Start Flower server
 fl.server.start_server(
     server_address="0.0.0.0:8080",
-    config=fl.server.ServerConfig(num_rounds=3),
+    config=fl.server.ServerConfig(num_rounds=2),
     strategy=strategy
 )
