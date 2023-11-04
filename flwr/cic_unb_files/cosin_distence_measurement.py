@@ -60,41 +60,7 @@ for client_id in range(1, 8):
     params_server = parameters_to_vector(model1.parameters())
     params_client = parameters_to_vector(model_client.parameters())
 
+    cos = nn.CosineSimilarity(dim=0)
+    div = cos(params_server, params_client)
 
-
-    # Calcular o produto escalar
-    dot_product = torch.dot(params_server, params_client)
-
-    # Calcular as magnitudes
-    magnitude_server = params_server.norm()
-    magnitude_client = params_client.norm()
-
-    # Calcular a similaridade do cosseno
-    cosine_similarity = dot_product / (magnitude_server * magnitude_client)
-
-    print(f"Similaridade de cosseno entre o modelo do servidor e o modelo do cliente {client_id}: {cosine_similarity}")
-
-
-
-'''
-#______________________________________________________
-model1 = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2)
-model2 = LSTMModel(input_size=78, hidden_size=16, num_layers=5, output_size=2)
-
-
-model1.load_state_dict(torch.load("../results/cic-unb-models/dataset_1.pth"))
-model2.load_state_dict(torch.load("../results/cic-unb-models/dataset_4.pth"))
-
-
-
-
-# Comparar os pesos e bias de cada camada
-for name1, param1 in model1.named_parameters():
-    for name2, param2 in model2.named_parameters():
-        if name1 == name2: # Se os nomes das camadas forem iguais
-            print(param1)
-            if torch.equal(param1, param2): # Se os parâmetros forem iguais
-                print(f"A camada {name1} é igual nos dois modelos")
-            else: # Se os parâmetros forem diferentes
-                print(f"A camada {name1} é diferente nos dois modelos")
-'''
+    print(f"Similaridade de cosseno entre o modelo do servidor e o modelo do cliente {client_id}: {div}")
