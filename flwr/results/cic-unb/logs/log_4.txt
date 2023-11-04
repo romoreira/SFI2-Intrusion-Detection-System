@@ -1,140 +1,273 @@
-INFO flwr 2023-11-03 17:56:24,315 | app.py:162 | Starting Flower server, config: ServerConfig(num_rounds=2, round_timeout=None)
-INFO flwr 2023-11-03 17:56:24,327 | app.py:175 | Flower ECE: gRPC server running (2 rounds), SSL is disabled
-INFO flwr 2023-11-03 17:56:24,327 | server.py:89 | Initializing global parameters
-INFO flwr 2023-11-03 17:56:24,327 | server.py:276 | Requesting initial parameters from one random client
-INFO flwr 2023-11-03 17:56:37,305 | server.py:280 | Received initial parameters from one random client
-INFO flwr 2023-11-03 17:56:37,305 | server.py:91 | Evaluating initial parameters
-  0%|          | 0/1394 [00:00<?, ?it/s]  0%|          | 1/1394 [00:00<11:47,  1.97it/s]  7%|▋         | 101/1394 [00:00<00:05, 220.89it/s] 14%|█▍        | 196/1394 [00:00<00:03, 394.32it/s] 25%|██▌       | 350/1394 [00:00<00:01, 684.28it/s] 34%|███▍      | 475/1394 [00:00<00:01, 833.54it/s] 45%|████▍     | 627/1394 [00:01<00:00, 1021.52it/s] 57%|█████▋    | 792/1394 [00:01<00:00, 1197.96it/s] 69%|██████▊   | 957/1394 [00:01<00:00, 1325.47it/s] 81%|████████  | 1124/1394 [00:01<00:00, 1425.04it/s] 93%|█████████▎| 1292/1394 [00:01<00:00, 1497.06it/s]100%|██████████| 1394/1394 [00:01<00:00, 946.16it/s] 
-INFO flwr 2023-11-03 17:56:46,889 | server.py:94 | initial parameters (loss, other metrics): 1163.9903235435486, {'accuracy': 0.42883093000829764}
-INFO flwr 2023-11-03 17:56:46,889 | server.py:104 | FL starting
-DEBUG flwr 2023-11-03 17:56:46,889 | server.py:222 | fit_round 1: strategy sampled 7 clients (out of 7)
-DEBUG flwr 2023-11-03 18:06:21,231 | server.py:236 | fit_round 1 received 7 results and 0 failures
-WARNING flwr 2023-11-03 18:06:21,239 | fedavg.py:242 | No fit_metrics_aggregation_fn provided
-Server-side evaluation loss 1163.9903235435486 / accuracy 0.42883093000829764
-  0%|          | 0/1394 [00:00<?, ?it/s] 12%|█▏        | 165/1394 [00:00<00:00, 1649.11it/s] 24%|██▍       | 332/1394 [00:00<00:00, 1657.53it/s] 36%|███▌      | 499/1394 [00:00<00:00, 1663.15it/s] 48%|████▊     | 668/1394 [00:00<00:00, 1670.07it/s] 60%|█████▉    | 836/1394 [00:00<00:00, 1671.33it/s] 72%|███████▏  | 1004/1394 [00:00<00:00, 1668.35it/s] 84%|████████▍ | 1172/1394 [00:00<00:00, 1670.46it/s] 96%|█████████▌| 1340/1394 [00:00<00:00, 1673.37it/s]100%|██████████| 1394/1394 [00:00<00:00, 1669.86it/s]
-INFO flwr 2023-11-03 18:06:26,041 | server.py:125 | fit progress: (1, 480.3230242729187, {'accuracy': 0.9686932340606849}, 579.151831848023)
-DEBUG flwr 2023-11-03 18:06:26,041 | server.py:173 | evaluate_round 1: strategy sampled 7 clients (out of 7)
-DEBUG flwr 2023-11-03 18:06:28,536 | server.py:187 | evaluate_round 1 received 7 results and 0 failures
-WARNING flwr 2023-11-03 18:06:28,536 | fedavg.py:273 | No evaluate_metrics_aggregation_fn provided
-DEBUG flwr 2023-11-03 18:06:28,536 | server.py:222 | fit_round 2: strategy sampled 7 clients (out of 7)
-DEBUG flwr 2023-11-03 18:15:57,683 | server.py:236 | fit_round 2 received 7 results and 0 failures
-Server-side evaluation loss 480.3230242729187 / accuracy 0.9686932340606849
-  0%|          | 0/1394 [00:00<?, ?it/s] 12%|█▏        | 167/1394 [00:00<00:00, 1667.40it/s] 24%|██▍       | 335/1394 [00:00<00:00, 1671.27it/s] 36%|███▌      | 503/1394 [00:00<00:00, 1664.67it/s] 48%|████▊     | 670/1394 [00:00<00:00, 1664.32it/s] 60%|██████    | 837/1394 [00:00<00:00, 1661.32it/s] 72%|███████▏  | 1005/1394 [00:00<00:00, 1664.84it/s] 84%|████████▍ | 1173/1394 [00:00<00:00, 1668.73it/s] 96%|█████████▌| 1340/1394 [00:00<00:00, 1665.75it/s]100%|██████████| 1394/1394 [00:00<00:00, 1664.14it/s]
-INFO flwr 2023-11-03 18:16:02,429 | server.py:125 | fit progress: (2, 479.29973316192627, {'accuracy': 0.9690744769123815}, 1155.539871364017)
-DEBUG flwr 2023-11-03 18:16:02,429 | server.py:173 | evaluate_round 2: strategy sampled 7 clients (out of 7)
-DEBUG flwr 2023-11-03 18:16:04,863 | server.py:187 | evaluate_round 2 received 7 results and 0 failures
-INFO flwr 2023-11-03 18:16:04,863 | server.py:153 | FL finished in 1157.9741191850044
-INFO flwr 2023-11-03 18:16:04,863 | app.py:225 | app_fit: losses_distributed [(1, 659.8328692272737), (2, 740.4839001623556)]
-INFO flwr 2023-11-03 18:16:04,863 | app.py:226 | app_fit: metrics_distributed_fit {}
-INFO flwr 2023-11-03 18:16:04,863 | app.py:227 | app_fit: metrics_distributed {}
-INFO flwr 2023-11-03 18:16:04,863 | app.py:228 | app_fit: losses_centralized [(0, 1163.9903235435486), (1, 480.3230242729187), (2, 479.29973316192627)]
-INFO flwr 2023-11-03 18:16:04,863 | app.py:229 | app_fit: metrics_centralized {'accuracy': [(0, 0.42883093000829764), (1, 0.9686932340606849), (2, 0.9690744769123815)]}
-Server-side evaluation loss 479.29973316192627 / accuracy 0.9690744769123815
-011084577068686485, accuracy: 95.84%
-Epoch 6: train loss 0.01029166579246521, accuracy: 98.4%
-Epoch 7: train loss 0.010292980819940567, accuracy: 98.4%
-Epoch 5: train loss 0.011159018613398075, accuracy: 95.64%
-Epoch 8: train loss 0.010291674174368382, accuracy: 98.4%
-Epoch 6: train loss 0.011056136339902878, accuracy: 95.97%
-Epoch 9: train loss 0.010293824598193169, accuracy: 98.39%
-Epoch 7: train loss 0.010958576574921608, accuracy: 96.27%
-Epoch 8: train loss 0.010905788280069828, accuracy: 96.43%
-Epoch 9: train loss 0.010967695154249668, accuracy: 96.26%
-Epoch 10: train loss 0.010942213237285614, accuracy: 96.32%
-Epoch 10: train loss 0.010120436549186707, accuracy: 98.97%
-Epoch 10: train loss 0.00995602272450924, accuracy: 99.46%
-Epoch 10: train loss 0.010290544480085373, accuracy: 98.41%
-Epoch 10: train loss 0.011534949764609337, accuracy: 94.44%
-Epoch 10: train loss 0.009792919270694256, accuracy: 99.99%
-Epoch 10: train loss 0.010188070125877857, accuracy: 98.72%
-Acurácia do Cliente: 4 eh: 0.9781651699242825
+INFO flwr 2023-11-03 22:29:31,319 | app.py:162 | Starting Flower server, config: ServerConfig(num_rounds=4, round_timeout=None)
+INFO flwr 2023-11-03 22:29:31,331 | app.py:175 | Flower ECE: gRPC server running (4 rounds), SSL is disabled
+INFO flwr 2023-11-03 22:29:31,331 | server.py:89 | Initializing global parameters
+INFO flwr 2023-11-03 22:29:31,331 | server.py:276 | Requesting initial parameters from one random client
+INFO flwr 2023-11-03 22:29:44,957 | server.py:280 | Received initial parameters from one random client
+INFO flwr 2023-11-03 22:29:44,957 | server.py:91 | Evaluating initial parameters
+  0%|          | 0/1394 [00:00<?, ?it/s]  0%|          | 1/1394 [00:00<11:18,  2.05it/s] 10%|▉         | 139/1394 [00:00<00:03, 313.99it/s] 20%|██        | 281/1394 [00:00<00:01, 583.56it/s] 31%|███       | 426/1394 [00:00<00:01, 806.76it/s] 39%|███▉      | 549/1394 [00:00<00:00, 886.59it/s] 48%|████▊     | 667/1394 [00:01<00:00, 916.27it/s] 58%|█████▊    | 802/1394 [00:01<00:00, 1031.19it/s] 67%|██████▋   | 939/1394 [00:01<00:00, 1122.16it/s] 77%|███████▋  | 1071/1394 [00:01<00:00, 1176.33it/s] 88%|████████▊ | 1232/1394 [00:01<00:00, 1298.73it/s]100%|██████████| 1394/1394 [00:01<00:00, 1391.29it/s]100%|██████████| 1394/1394 [00:01<00:00, 913.36it/s] 
+INFO flwr 2023-11-03 22:29:54,461 | server.py:94 | initial parameters (loss, other metrics): 1466.9401189088821, {'accuracy': 0.1600322935121437}
+INFO flwr 2023-11-03 22:29:54,462 | server.py:104 | FL starting
+DEBUG flwr 2023-11-03 22:29:54,462 | server.py:222 | fit_round 1: strategy sampled 7 clients (out of 7)
+DEBUG flwr 2023-11-03 22:39:18,795 | server.py:236 | fit_round 1 received 7 results and 0 failures
+WARNING flwr 2023-11-03 22:39:18,803 | fedavg.py:242 | No fit_metrics_aggregation_fn provided
+Server-side evaluation loss 1466.9401189088821 / accuracy 0.1600322935121437
+  0%|          | 0/1394 [00:00<?, ?it/s] 11%|█▏        | 159/1394 [00:00<00:00, 1588.93it/s] 23%|██▎       | 320/1394 [00:00<00:00, 1596.72it/s] 35%|███▍      | 481/1394 [00:00<00:00, 1599.95it/s] 46%|████▌     | 641/1394 [00:00<00:00, 1596.93it/s] 58%|█████▊    | 802/1394 [00:00<00:00, 1600.56it/s] 69%|██████▉   | 963/1394 [00:00<00:00, 1600.56it/s] 81%|████████  | 1124/1394 [00:00<00:00, 1602.59it/s] 92%|█████████▏| 1287/1394 [00:00<00:00, 1610.55it/s]100%|██████████| 1394/1394 [00:00<00:00, 1605.54it/s]
+INFO flwr 2023-11-03 22:39:23,581 | server.py:125 | fit progress: (1, 703.1664653122425, {'accuracy': 0.8086833665986409}, 569.1196170109906)
+DEBUG flwr 2023-11-03 22:39:23,581 | server.py:173 | evaluate_round 1: strategy sampled 7 clients (out of 7)
+DEBUG flwr 2023-11-03 22:39:26,048 | server.py:187 | evaluate_round 1 received 7 results and 0 failures
+WARNING flwr 2023-11-03 22:39:26,048 | fedavg.py:273 | No evaluate_metrics_aggregation_fn provided
+DEBUG flwr 2023-11-03 22:39:26,049 | server.py:222 | fit_round 2: strategy sampled 7 clients (out of 7)
+DEBUG flwr 2023-11-03 22:48:48,551 | server.py:236 | fit_round 2 received 7 results and 0 failures
+Server-side evaluation loss 703.1664653122425 / accuracy 0.8086833665986409
+  0%|          | 0/1394 [00:00<?, ?it/s] 12%|█▏        | 162/1394 [00:00<00:00, 1615.83it/s] 23%|██▎       | 326/1394 [00:00<00:00, 1628.70it/s] 35%|███▌      | 489/1394 [00:00<00:00, 1623.88it/s] 47%|████▋     | 652/1394 [00:00<00:00, 1623.56it/s] 59%|█████▊    | 816/1394 [00:00<00:00, 1627.71it/s] 70%|███████   | 980/1394 [00:00<00:00, 1629.22it/s] 82%|████████▏ | 1145/1394 [00:00<00:00, 1633.47it/s] 94%|█████████▍| 1310/1394 [00:00<00:00, 1636.34it/s]100%|██████████| 1394/1394 [00:00<00:00, 1630.73it/s]
+INFO flwr 2023-11-03 22:48:53,116 | server.py:125 | fit progress: (2, 709.4745900332928, {'accuracy': 0.8042654347289812}, 1138.6542665529996)
+DEBUG flwr 2023-11-03 22:48:53,116 | server.py:173 | evaluate_round 2: strategy sampled 7 clients (out of 7)
+DEBUG flwr 2023-11-03 22:48:55,532 | server.py:187 | evaluate_round 2 received 7 results and 0 failures
+DEBUG flwr 2023-11-03 22:48:55,532 | server.py:222 | fit_round 3: strategy sampled 7 clients (out of 7)
+DEBUG flwr 2023-11-03 22:58:21,652 | server.py:236 | fit_round 3 received 7 results and 0 failures
+Server-side evaluation loss 709.4745900332928 / accuracy 0.8042654347289812
+  0%|          | 0/1394 [00:00<?, ?it/s] 12%|█▏        | 163/1394 [00:00<00:00, 1628.50it/s] 23%|██▎       | 326/1394 [00:00<00:00, 1623.35it/s] 35%|███▌      | 489/1394 [00:00<00:00, 1623.03it/s] 47%|████▋     | 652/1394 [00:00<00:00, 1611.27it/s] 59%|█████▊    | 817/1394 [00:00<00:00, 1624.32it/s] 70%|███████   | 982/1394 [00:00<00:00, 1632.59it/s] 82%|████████▏ | 1148/1394 [00:00<00:00, 1638.90it/s] 94%|█████████▍| 1312/1394 [00:00<00:00, 1636.74it/s]100%|██████████| 1394/1394 [00:00<00:00, 1631.72it/s]
+INFO flwr 2023-11-03 22:58:26,086 | server.py:125 | fit progress: (3, 700.8124951422215, {'accuracy': 0.8104998766567244}, 1711.6248263629968)
+DEBUG flwr 2023-11-03 22:58:26,087 | server.py:173 | evaluate_round 3: strategy sampled 7 clients (out of 7)
+DEBUG flwr 2023-11-03 22:58:28,510 | server.py:187 | evaluate_round 3 received 7 results and 0 failures
+DEBUG flwr 2023-11-03 22:58:28,510 | server.py:222 | fit_round 4: strategy sampled 7 clients (out of 7)
+DEBUG flwr 2023-11-03 23:07:55,012 | server.py:236 | fit_round 4 received 7 results and 0 failures
+Server-side evaluation loss 700.8124951422215 / accuracy 0.8104998766567244
+  0%|          | 0/1394 [00:00<?, ?it/s] 12%|█▏        | 163/1394 [00:00<00:00, 1624.53it/s] 23%|██▎       | 326/1394 [00:00<00:00, 1616.75it/s] 35%|███▌      | 488/1394 [00:00<00:00, 1614.45it/s] 47%|████▋     | 652/1394 [00:00<00:00, 1622.83it/s] 58%|█████▊    | 815/1394 [00:00<00:00, 1625.28it/s] 70%|███████   | 980/1394 [00:00<00:00, 1631.83it/s] 82%|████████▏ | 1144/1394 [00:00<00:00, 1631.22it/s] 94%|█████████▍| 1309/1394 [00:00<00:00, 1634.09it/s]100%|██████████| 1394/1394 [00:00<00:00, 1628.43it/s]
+INFO flwr 2023-11-03 23:07:59,447 | server.py:125 | fit progress: (4, 481.03406459093094, {'accuracy': 0.9681998609584894}, 2284.9854552579927)
+DEBUG flwr 2023-11-03 23:07:59,447 | server.py:173 | evaluate_round 4: strategy sampled 7 clients (out of 7)
+DEBUG flwr 2023-11-03 23:08:01,867 | server.py:187 | evaluate_round 4 received 7 results and 0 failures
+INFO flwr 2023-11-03 23:08:01,867 | server.py:153 | FL finished in 2287.40569165902
+INFO flwr 2023-11-03 23:08:01,868 | app.py:225 | app_fit: losses_distributed [(1, 698.7254657365527), (2, 713.1241997747104), (3, 720.5596459233724), (4, 756.176368992444)]
+INFO flwr 2023-11-03 23:08:01,868 | app.py:226 | app_fit: metrics_distributed_fit {}
+INFO flwr 2023-11-03 23:08:01,868 | app.py:227 | app_fit: metrics_distributed {}
+INFO flwr 2023-11-03 23:08:01,868 | app.py:228 | app_fit: losses_centralized [(0, 1466.9401189088821), (1, 703.1664653122425), (2, 709.4745900332928), (3, 700.8124951422215), (4, 481.03406459093094)]
+INFO flwr 2023-11-03 23:08:01,868 | app.py:229 | app_fit: metrics_centralized {'accuracy': [(0, 0.1600322935121437), (1, 0.8086833665986409), (2, 0.8042654347289812), (3, 0.8104998766567244), (4, 0.9681998609584894)]}
+Server-side evaluation loss 481.03406459093094 / accuracy 0.9681998609584894
+03128433, accuracy: 99.9%
+Epoch 3: train loss 0.010046535171568394, accuracy: 99.15%
+Epoch 5: train loss 0.010415826924145222, accuracy: 97.97%
+Epoch 4: train loss 0.011661624535918236, accuracy: 94.02%
+Epoch 2: train loss 0.012203535065054893, accuracy: 92.25%
+Epoch 6: train loss 0.011477150022983551, accuracy: 94.48%
+Epoch 6: train loss 0.010372299700975418, accuracy: 98.13%
+Epoch 4: train loss 0.009803056716918945, accuracy: 99.95%
+Epoch 4: train loss 0.010051937773823738, accuracy: 99.17%
+Epoch 5: train loss 0.01161144208163023, accuracy: 94.18%
+Epoch 7: train loss 0.0112350108101964, accuracy: 95.32%
+Epoch 7: train loss 0.010347782634198666, accuracy: 98.16%
+Epoch 8: train loss 0.011048449203372002, accuracy: 96.01%
+Epoch 2: train loss 0.011216903105378151, accuracy: 95.42%
+Epoch 6: train loss 0.01158307958394289, accuracy: 94.25%
+Epoch 5: train loss 0.00979774259030819, accuracy: 99.97%
+Epoch 3: train loss 0.011947684921324253, accuracy: 93.01%
+Epoch 8: train loss 0.010344303213059902, accuracy: 98.23%
+Epoch 5: train loss 0.010051732882857323, accuracy: 99.16%
+Epoch 9: train loss 0.010932596400380135, accuracy: 96.29%
+Epoch 9: train loss 0.010344787500798702, accuracy: 98.24%
+Epoch 7: train loss 0.011569036170840263, accuracy: 94.32%
+Epoch 6: train loss 0.009798687882721424, accuracy: 99.97%
+Epoch 6: train loss 0.010031093843281269, accuracy: 99.23%
+Epoch 8: train loss 0.01155670452862978, accuracy: 94.36%
+Epoch 4: train loss 0.011730720289051533, accuracy: 93.81%
+Epoch 7: train loss 0.010038767009973526, accuracy: 99.22%
+Epoch 7: train loss 0.009796278551220894, accuracy: 99.97%
+Epoch 3: train loss 0.011144663207232952, accuracy: 95.67%
+Epoch 9: train loss 0.011545485816895962, accuracy: 94.38%
+Epoch 8: train loss 0.010044252499938011, accuracy: 99.19%
+Epoch 8: train loss 0.009797241538763046, accuracy: 99.97%
+Epoch 5: train loss 0.011549126356840134, accuracy: 94.39%
+Epoch 9: train loss 0.010043855756521225, accuracy: 99.19%
+Epoch 9: train loss 0.009797482751309872, accuracy: 99.97%
+Epoch 4: train loss 0.011211292818188667, accuracy: 95.45%
+Epoch 6: train loss 0.011544369161128998, accuracy: 94.42%
+Epoch 7: train loss 0.011828304268419743, accuracy: 93.41%
+Epoch 5: train loss 0.011213632300496101, accuracy: 95.4%
+Epoch 8: train loss 0.01205162052065134, accuracy: 92.74%
+Epoch 6: train loss 0.011186501942574978, accuracy: 95.52%
+Epoch 9: train loss 0.01199864037334919, accuracy: 92.95%
+Epoch 7: train loss 0.01116926409304142, accuracy: 95.56%
+Epoch 8: train loss 0.011155297048389912, accuracy: 95.62%
+Epoch 9: train loss 0.011197998188436031, accuracy: 95.48%
+Epoch 10: train loss 0.011208558455109596, accuracy: 95.45%
+Epoch 10: train loss 0.010035893879830837, accuracy: 99.2%
+Epoch 10: train loss 0.012050062417984009, accuracy: 92.75%
+Epoch 10: train loss 0.011542052961885929, accuracy: 94.38%
+Epoch 10: train loss 0.010851050727069378, accuracy: 96.53%
+Epoch 10: train loss 0.01033907849341631, accuracy: 98.22%
+Epoch 10: train loss 0.00979615654796362, accuracy: 99.97%
+Acurácia do Cliente: 6 eh: 0.7687395309882747
 Starting Client training for 10 epochs
-Acurácia do Cliente: 6 eh: 0.9327365996649917
+Acurácia do Cliente: 7 eh: 0.690719822812846
 Starting Client training for 10 epochs
-Acurácia do Cliente: 7 eh: 0.6738427464008859
+Acurácia do Cliente: 3 eh: 0.845466200062368
 Starting Client training for 10 epochs
-Acurácia do Cliente: 2 eh: 0.7320812461203101
+Acurácia do Cliente: 4 eh: 0.8051300111521982
 Starting Client training for 10 epochs
-Acurácia do Cliente: 5 eh: 0.5991552344049987
+Acurácia do Cliente: 5 eh: 0.5196355639333962
 Starting Client training for 10 epochs
-Acurácia do Cliente: 1 eh: 0.9673252450045974
+Acurácia do Cliente: 1 eh: 0.8089300531497388
 Starting Client training for 10 epochs
-Acurácia do Cliente: 3 eh: 0.987387824399709
+Acurácia do Cliente: 2 eh: 0.7830405220077666
 Starting Client training for 10 epochs
-Epoch 1: train loss 0.011319434270262718, accuracy: 95.05%
-Epoch 1: train loss 0.011205388233065605, accuracy: 95.41%
-Epoch 1: train loss 0.019732292741537094, accuracy: 68.25%
-Epoch 1: train loss 0.010823201388120651, accuracy: 96.69%
-Epoch 1: train loss 0.010049485601484776, accuracy: 99.11%
-Epoch 2: train loss 0.010488550178706646, accuracy: 97.68%
-Epoch 2: train loss 0.011079414747655392, accuracy: 95.8%
-Epoch 1: train loss 0.011527706868946552, accuracy: 94.45%
-Epoch 2: train loss 0.01646851934492588, accuracy: 78.6%
-Epoch 3: train loss 0.011058279313147068, accuracy: 95.91%
-Epoch 3: train loss 0.01036674715578556, accuracy: 98.17%
-Epoch 2: train loss 0.010075937956571579, accuracy: 99.07%
-Epoch 2: train loss 0.009815550409257412, accuracy: 99.93%
-Epoch 1: train loss 0.011166540905833244, accuracy: 95.6%
-Epoch 4: train loss 0.010348217561841011, accuracy: 98.25%
-Epoch 4: train loss 0.01105622947216034, accuracy: 95.99%
-Epoch 3: train loss 0.012432921677827835, accuracy: 91.59%
-Epoch 3: train loss 0.010049566626548767, accuracy: 99.17%
-Epoch 3: train loss 0.009798451326787472, accuracy: 99.97%
-Epoch 5: train loss 0.010324819944798946, accuracy: 98.25%
-Epoch 5: train loss 0.011078848503530025, accuracy: 95.93%
-Epoch 2: train loss 0.011359253898262978, accuracy: 94.96%
-Epoch 4: train loss 0.011784235946834087, accuracy: 93.66%
-Epoch 6: train loss 0.010325510054826736, accuracy: 98.3%
-Epoch 6: train loss 0.011060447432100773, accuracy: 95.98%
-Epoch 4: train loss 0.010040325112640858, accuracy: 99.19%
-Epoch 4: train loss 0.009793110191822052, accuracy: 99.99%
-Epoch 5: train loss 0.01165271271020174, accuracy: 94.06%
-Epoch 7: train loss 0.010310948826372623, accuracy: 98.37%
-Epoch 7: train loss 0.01105269230902195, accuracy: 95.94%
-Epoch 2: train loss 0.010952959768474102, accuracy: 96.29%
-Epoch 5: train loss 0.010034606792032719, accuracy: 99.2%
-Epoch 3: train loss 0.011333209462463856, accuracy: 95.0%
-Epoch 8: train loss 0.010281802155077457, accuracy: 98.41%
-Epoch 8: train loss 0.011008202098309994, accuracy: 96.09%
-Epoch 5: train loss 0.009792979806661606, accuracy: 99.99%
-Epoch 6: train loss 0.011631623841822147, accuracy: 94.15%
-Epoch 9: train loss 0.010263343341648579, accuracy: 98.48%
-Epoch 9: train loss 0.010932235047221184, accuracy: 96.43%
-Epoch 7: train loss 0.011598923243582249, accuracy: 94.23%
-Epoch 6: train loss 0.010032129473984241, accuracy: 99.23%
-Epoch 6: train loss 0.009792929515242577, accuracy: 99.99%
-Epoch 8: train loss 0.011564857326447964, accuracy: 94.34%
-Epoch 4: train loss 0.011321447789669037, accuracy: 95.1%
-Epoch 7: train loss 0.010023379698395729, accuracy: 99.22%
-Epoch 7: train loss 0.009792913682758808, accuracy: 99.99%
-Epoch 3: train loss 0.010933668352663517, accuracy: 96.35%
-Epoch 9: train loss 0.011543813161551952, accuracy: 94.39%
-Epoch 8: train loss 0.010027953423559666, accuracy: 99.25%
-Epoch 8: train loss 0.009792913682758808, accuracy: 99.99%
-Epoch 5: train loss 0.011253547854721546, accuracy: 95.37%
-Epoch 9: train loss 0.010049541480839252, accuracy: 99.16%
-Epoch 9: train loss 0.00979290995746851, accuracy: 99.99%
-Epoch 4: train loss 0.01098550297319889, accuracy: 96.21%
-Epoch 6: train loss 0.0111285001039505, accuracy: 95.7%
-Epoch 7: train loss 0.011164747178554535, accuracy: 95.62%
-Epoch 5: train loss 0.010934576392173767, accuracy: 96.33%
-Epoch 8: train loss 0.010961242020130157, accuracy: 96.31%
-Epoch 6: train loss 0.010919461026787758, accuracy: 96.39%
-Epoch 9: train loss 0.010874425992369652, accuracy: 96.52%
-Epoch 7: train loss 0.01089716237038374, accuracy: 96.49%
-Epoch 8: train loss 0.010930987074971199, accuracy: 96.38%
-Epoch 9: train loss 0.010907317511737347, accuracy: 96.43%
-Epoch 10: train loss 0.010863956063985825, accuracy: 96.56%
-Epoch 10: train loss 0.010845773853361607, accuracy: 96.61%
-Epoch 10: train loss 0.01023726537823677, accuracy: 98.52%
-Epoch 10: train loss 0.010060527361929417, accuracy: 99.16%
-Epoch 10: train loss 0.010570449754595757, accuracy: 97.4%
-Epoch 10: train loss 0.011536394245922565, accuracy: 94.4%
-Epoch 10: train loss 0.009792910888791084, accuracy: 99.99%
-Acurácia do Cliente: 4 eh: 0.9840347479016259
-Acurácia do Cliente: 1 eh: 0.9688053643111839
-Acurácia do Cliente: 3 eh: 0.991926821662451
-Acurácia do Cliente: 5 eh: 0.44231507662233394
-Acurácia do Cliente: 7 eh: 0.4344629014396456
-Acurácia do Cliente: 2 eh: 0.6560465418429069
-Acurácia do Cliente: 6 eh: 0.960427135678392
+Epoch 1: train loss 0.0155539745464921, accuracy: 81.57%
+Epoch 1: train loss 0.01409225445240736, accuracy: 86.26%
+Epoch 1: train loss 0.0196276493370533, accuracy: 68.47%
+Epoch 1: train loss 0.014203856699168682, accuracy: 85.83%
+Epoch 1: train loss 0.010514229536056519, accuracy: 97.65%
+Epoch 2: train loss 0.015020470134913921, accuracy: 83.23%
+Epoch 2: train loss 0.011266459710896015, accuracy: 95.37%
+Epoch 1: train loss 0.015231791883707047, accuracy: 82.6%
+Epoch 2: train loss 0.019522732123732567, accuracy: 68.83%
+Epoch 3: train loss 0.014714519493281841, accuracy: 84.27%
+Epoch 3: train loss 0.01085039135068655, accuracy: 96.59%
+Epoch 2: train loss 0.011884370818734169, accuracy: 93.34%
+Epoch 2: train loss 0.009792680852115154, accuracy: 99.99%
+Epoch 1: train loss 0.011391054838895798, accuracy: 94.85%
+Epoch 3: train loss 0.0185992494225502, accuracy: 71.7%
+Epoch 4: train loss 0.014112167060375214, accuracy: 86.17%
+Epoch 4: train loss 0.010664070956408978, accuracy: 97.2%
+Epoch 3: train loss 0.010965236462652683, accuracy: 96.21%
+Epoch 3: train loss 0.009792674332857132, accuracy: 99.99%
+Epoch 5: train loss 0.013556481339037418, accuracy: 87.97%
+Epoch 5: train loss 0.010546484030783176, accuracy: 97.56%
+Epoch 2: train loss 0.014398039318621159, accuracy: 85.27%
+Epoch 4: train loss 0.01570599526166916, accuracy: 80.78%
+Epoch 6: train loss 0.01333305798470974, accuracy: 88.67%
+Epoch 6: train loss 0.010442623868584633, accuracy: 97.9%
+Epoch 4: train loss 0.0107942009344697, accuracy: 96.81%
+Epoch 4: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 5: train loss 0.013385511934757233, accuracy: 88.44%
+Epoch 7: train loss 0.012985872104763985, accuracy: 89.83%
+Epoch 7: train loss 0.010387818329036236, accuracy: 98.14%
+Epoch 6: train loss 0.01216299831867218, accuracy: 92.51%
+Epoch 2: train loss 0.011251265183091164, accuracy: 95.34%
+Epoch 3: train loss 0.01437508687376976, accuracy: 85.35%
+Epoch 8: train loss 0.012759256176650524, accuracy: 90.67%
+Epoch 5: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 5: train loss 0.010592833161354065, accuracy: 97.4%
+Epoch 8: train loss 0.010370714589953423, accuracy: 98.15%
+Epoch 9: train loss 0.012277211993932724, accuracy: 92.03%
+Epoch 7: train loss 0.011872530914843082, accuracy: 93.4%
+Epoch 9: train loss 0.01034247875213623, accuracy: 98.27%
+Epoch 6: train loss 0.010507826693356037, accuracy: 97.66%
+Epoch 6: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 8: train loss 0.011758467182517052, accuracy: 93.74%
+Epoch 4: train loss 0.014361752197146416, accuracy: 85.45%
+Epoch 7: train loss 0.010473611764609814, accuracy: 97.83%
+Epoch 7: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 9: train loss 0.011694487184286118, accuracy: 93.92%
+Epoch 3: train loss 0.011207462288439274, accuracy: 95.47%
+Epoch 8: train loss 0.010455375537276268, accuracy: 97.92%
+Epoch 8: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 5: train loss 0.014066681265830994, accuracy: 86.26%
+Epoch 9: train loss 0.010421272367238998, accuracy: 97.96%
+Epoch 9: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 6: train loss 0.013420330360531807, accuracy: 88.45%
+Epoch 4: train loss 0.011119889095425606, accuracy: 95.73%
+Epoch 7: train loss 0.01212384644895792, accuracy: 92.52%
+Epoch 5: train loss 0.011090575717389584, accuracy: 95.8%
+Epoch 8: train loss 0.01178416796028614, accuracy: 93.66%
+Epoch 9: train loss 0.011704019270837307, accuracy: 93.86%
+Epoch 6: train loss 0.01104599516838789, accuracy: 95.96%
+Epoch 7: train loss 0.010994106531143188, accuracy: 96.15%
+Epoch 8: train loss 0.01110136043280363, accuracy: 95.78%
+Epoch 9: train loss 0.011125709861516953, accuracy: 95.72%
+Epoch 10: train loss 0.011119434610009193, accuracy: 95.74%
+Epoch 10: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 10: train loss 0.011656775139272213, accuracy: 94.02%
+Epoch 10: train loss 0.010340712033212185, accuracy: 98.27%
+Epoch 10: train loss 0.011553913354873657, accuracy: 94.33%
+Epoch 10: train loss 0.011993451043963432, accuracy: 93.11%
+Epoch 10: train loss 0.010382764972746372, accuracy: 98.02%
+Acurácia do Cliente: 1 eh: 0.8174295261375614
+Starting Client training for 10 epochs
+Acurácia do Cliente: 6 eh: 0.804177135678392
+Starting Client training for 10 epochs
+Acurácia do Cliente: 3 eh: 0.8614739614011988
+Starting Client training for 10 epochs
+Acurácia do Cliente: 5 eh: 0.4459803818899012
+Starting Client training for 10 epochs
+Acurácia do Cliente: 7 eh: 0.6779180509413067
+Starting Client training for 10 epochs
+Acurácia do Cliente: 2 eh: 0.7760534711495432
+Starting Client training for 10 epochs
+Acurácia do Cliente: 4 eh: 0.8142278570170804
+Starting Client training for 10 epochs
+Epoch 1: train loss 0.012405951507389545, accuracy: 91.66%
+Epoch 1: train loss 0.010773373767733574, accuracy: 96.85%
+Epoch 1: train loss 0.019696643576025963, accuracy: 68.31%
+Epoch 1: train loss 0.011452886275947094, accuracy: 94.62%
+Epoch 1: train loss 0.009863154031336308, accuracy: 99.76%
+Epoch 2: train loss 0.010256271809339523, accuracy: 98.53%
+Epoch 2: train loss 0.01094030775129795, accuracy: 96.39%
+Epoch 2: train loss 0.019583897665143013, accuracy: 68.65%
+Epoch 1: train loss 0.012311088852584362, accuracy: 91.93%
+Epoch 3: train loss 0.010482060723006725, accuracy: 97.75%
+Epoch 3: train loss 0.010178512893617153, accuracy: 98.77%
+Epoch 2: train loss 0.01018532831221819, accuracy: 98.74%
+Epoch 2: train loss 0.009792676195502281, accuracy: 99.99%
+Epoch 1: train loss 0.011685569770634174, accuracy: 93.96%
+Epoch 3: train loss 0.019427243620157242, accuracy: 69.17%
+Epoch 4: train loss 0.010301757603883743, accuracy: 98.34%
+Epoch 4: train loss 0.01015191338956356, accuracy: 98.83%
+Epoch 3: train loss 0.009792675264179707, accuracy: 99.99%
+Epoch 3: train loss 0.010143336839973927, accuracy: 98.85%
+Epoch 5: train loss 0.010242505930364132, accuracy: 98.55%
+Epoch 5: train loss 0.010153144598007202, accuracy: 98.86%
+Epoch 2: train loss 0.011224346235394478, accuracy: 95.43%
+Epoch 4: train loss 0.01730806939303875, accuracy: 75.74%
+Epoch 6: train loss 0.01013040728867054, accuracy: 98.92%
+Epoch 6: train loss 0.010227726772427559, accuracy: 98.6%
+Epoch 4: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 4: train loss 0.010116200894117355, accuracy: 98.96%
+Epoch 5: train loss 0.014471621252596378, accuracy: 84.85%
+Epoch 7: train loss 0.010126366280019283, accuracy: 98.92%
+Epoch 7: train loss 0.010203622281551361, accuracy: 98.68%
+Epoch 2: train loss 0.011247573420405388, accuracy: 95.36%
+Epoch 6: train loss 0.013041714206337929, accuracy: 89.27%
+Epoch 5: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 3: train loss 0.010868816636502743, accuracy: 96.53%
+Epoch 5: train loss 0.010098731145262718, accuracy: 99.01%
+Epoch 8: train loss 0.010126753710210323, accuracy: 98.94%
+Epoch 8: train loss 0.010195164009928703, accuracy: 98.71%
+Epoch 9: train loss 0.010124164633452892, accuracy: 98.94%
+Epoch 9: train loss 0.010188700631260872, accuracy: 98.72%
+Epoch 7: train loss 0.012198937125504017, accuracy: 92.44%
+Epoch 6: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 6: train loss 0.010096306912600994, accuracy: 99.03%
+Epoch 4: train loss 0.011316744610667229, accuracy: 95.13%
+Epoch 8: train loss 0.011949100531637669, accuracy: 93.27%
+Epoch 7: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 7: train loss 0.01006897073239088, accuracy: 99.1%
+Epoch 9: train loss 0.011790642514824867, accuracy: 93.68%
+Epoch 3: train loss 0.011188103817403316, accuracy: 95.51%
+Epoch 8: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 8: train loss 0.010061284527182579, accuracy: 99.11%
+Epoch 5: train loss 0.010888892225921154, accuracy: 96.49%
+Epoch 9: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 9: train loss 0.010067269206047058, accuracy: 99.13%
+Epoch 6: train loss 0.010806211270391941, accuracy: 96.73%
+Epoch 4: train loss 0.011152231134474277, accuracy: 95.63%
+Epoch 7: train loss 0.010832883417606354, accuracy: 96.64%
+Epoch 5: train loss 0.011113186366856098, accuracy: 95.76%
+Epoch 8: train loss 0.010794619098305702, accuracy: 96.77%
+Epoch 9: train loss 0.010851003229618073, accuracy: 96.62%
+Epoch 6: train loss 0.01105708908289671, accuracy: 95.92%
+Epoch 7: train loss 0.01108851470053196, accuracy: 95.83%
+Epoch 8: train loss 0.01103224977850914, accuracy: 96.02%
+Epoch 9: train loss 0.011098171584308147, accuracy: 95.83%
+Epoch 10: train loss 0.011744236573576927, accuracy: 93.82%
+Epoch 10: train loss 0.011113880202174187, accuracy: 95.73%
+Epoch 10: train loss 0.01007482036948204, accuracy: 99.09%
+Epoch 10: train loss 0.010825106874108315, accuracy: 96.7%
+Epoch 10: train loss 0.00979266781359911, accuracy: 99.99%
+Epoch 10: train loss 0.010188919492065907, accuracy: 98.72%
+Epoch 10: train loss 0.01012613158673048, accuracy: 98.93%
+Acurácia do Cliente: 6 eh: 0.9908396147403685
+Acurácia do Cliente: 7 eh: 0.43246954595791803
+Acurácia do Cliente: 2 eh: 0.6372796697030504
+Acurácia do Cliente: 1 eh: 0.9690071987620821
+Acurácia do Cliente: 3 eh: 0.9998614046637331
+Acurácia do Cliente: 5 eh: 0.4421056306070444
+Acurácia do Cliente: 4 eh: 0.9863825790925632
