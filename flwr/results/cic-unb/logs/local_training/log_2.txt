@@ -1,0 +1,28 @@
+Label
+BENIGN       168186
+MALIGNANT      2180
+Name: count, dtype: int64
+Label
+MALIGNANT    128027
+BENIGN        97718
+Name: count, dtype: int64
+Label
+BENIGN       189067
+MALIGNANT      1966
+Name: count, dtype: int64
+Label
+BENIGN       288566
+MALIGNANT        36
+Name: count, dtype: int64
+Label
+MALIGNANT    158930
+BENIGN       127537
+Name: count, dtype: int64
+Label
+BENIGN       432074
+MALIGNANT     13835
+Name: count, dtype: int64
+Label
+BENIGN       440031
+MALIGNANT    252672
+Name: count, dtype: int64

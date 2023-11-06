@@ -50,7 +50,7 @@ class LSTMModel(nn.Module):
         self.hidden_layer = nn.Linear(hidden_size, hidden_size)
         self.output_layer = nn.Linear(hidden_size, output_size)
         self.activation = nn.ReLU()
-        self.dropout = nn.Dropout(0.4)
+        self.dropout = nn.Dropout(0.2)
 
     def forward(self, x):
         x = self.activation(self.input_layer(x))
@@ -289,11 +289,11 @@ trainloader, testloader = load_data()
 # Training of the model
 
 optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
-for epoch in range(1):
+for epoch in range(10):
     train(net, optimizer, trainloader)  # Train the model
     accuracy = test(net, testloader)  # Evaluate the model
 
-torch.save(net.state_dict(), "../results/cic-unb-models/local_training_dataset_"+str(args.dataset_id)+".pth")
+torch.save(net.state_dict(), "../results/cic-unb-models/single_models_for_each_client/local_training_dataset_"+str(args.dataset_id)+".pth")
 
 
 '''
