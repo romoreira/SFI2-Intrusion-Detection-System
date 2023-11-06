@@ -32,3 +32,7 @@ Epoch 1: train loss 0.01207629032433033, accuracy: 92.7%
 Epoch 3: train loss 0.011630256660282612, accuracy: 94.16%
 Epoch 4: train loss 0.010265356861054897, accuracy: 98.46%
 Epoch 4: train loss 0.010113080963492393, accuracy: 98.98%
+Epoch 3: train loss 0.009953266941010952, accuracy: 99.47%
+Epoch 3: train loss 0.009799063205718994, accuracy: 99.98%
+Epoch 5: train loss 0.010260630398988724, accuracy: 98.48%
+Epoch 5: train loss 0.010112340562045574, accuracy: 98.98%
