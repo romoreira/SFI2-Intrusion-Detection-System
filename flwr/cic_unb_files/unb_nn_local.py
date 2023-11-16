@@ -1,6 +1,6 @@
 import warnings
 from collections import OrderedDict
-
+import time
 import flwr as fl
 import torch
 import torch.nn as nn
@@ -131,9 +131,9 @@ def objective(trial):
     optimizer = getattr(optim, optimizer_name)(model.parameters(), lr=lr)
 
     # Training of the model
-    for epoch in range(n_epochs):
-        train(model, optimizer)  # Train the model
-        accuracy = test(model)   # Evaluate the model
+    for epoch in range(10):
+        train(model, optimizer, trainloader)  # Train the model
+        accuracy = test(model, testloader)   # Evaluate the model
 
         # For pruning (stops trial early if not promising)
         trial.report(accuracy, epoch)
@@ -147,32 +147,30 @@ def objective(trial):
 def remove_spaces(column_name):
     return column_name.strip()
 
-def load_dataset(dataset_id):
+def load_dataset():
+    # Lista de caminhos para os conjuntos de dados
+    dataset_paths = [
+        "../../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv",
+        "../../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv",
+        "../../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+        "../../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "../../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+    ]
 
-    if dataset_id == 1:
-        # Caminho para o diretório do conjunto de dados
-        data_dir = "../../dataset/cic-unb-ids/Tuesday-WorkingHours.pcap_ISCX.csv"
-    elif dataset_id == 2:
-        # Caminho para o diretório do conjunto de dados
-        data_dir = "../../dataset/cic-unb-ids/Wednesday-workingHours.pcap_ISCX.csv"
-    elif dataset_id == 3:
-        # Caminho para o diretório do conjunto de dados
-        data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
-    elif dataset_id == 4:
-        # Caminho para o diretório do conjunto de dados
-        data_dir = "../../dataset/cic-unb-ids/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
-    elif dataset_id == 5:
-        # Caminho para o diretório do conjunto de dados
-        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
-    elif dataset_id == 6:
-        # Caminho para o diretório do conjunto de dados
-        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Morning.pcap_ISCX.csv"
-    elif dataset_id == 7:
-        # Caminho para o diretório do conjunto de dados
-        data_dir = "../../dataset/cic-unb-ids/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+    # Lista para armazenar os DataFrames
+    dfs = []
 
-    df = pd.read_csv(data_dir)
-    #df = column_remover(df)
+    # Loop para ler e concatenar os DataFrames
+    for path in dataset_paths:
+        df = pd.read_csv(path)
+        dfs.append(df)
+
+    # Concatenar DataFrames
+    df = pd.concat(dfs, ignore_index=True)
+
+
     df.columns = df.columns.map(remove_spaces)
 
     df['Label'] = df['Label'].apply(lambda x: 'MALIGNANT' if x != 'BENIGN' else x)
@@ -238,22 +236,58 @@ def create_loaders(X_train, X_test, y_train, y_test):
     return train_loader, test_loader
 
 
-def train(net, optimizer, train_loader):
-    """Train the model on the training set."""
-
+def train(net, optimizer, trainloader):
+    losses = []  # Lista para armazenar os valores de perda
+    accuracies = []  # Lista para armazenar os valores de acurácia
     criterion = torch.nn.CrossEntropyLoss()
-    correct, total, epoch_loss = 0, 0, 0.0
-    for X, y in tqdm(trainloader):
-        optimizer.zero_grad()
-        loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
-        loss.backward()
-        optimizer.step()
-        epoch_loss += loss
+    net.train()
+    end_time = 0
+    start_time = time.time()
+    for epoch in range(10):
+        correct, total, epoch_loss = 0, 0, 0.0
+        for X, y in tqdm(trainloader):
+            optimizer.zero_grad()
+            loss = criterion(net(X.to(DEVICE)), y.to(DEVICE))
 
-        # Atualize o número de previsões corretas e o total
-        _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
-        total += y.size(0)
-        correct += (predicted == y.to(DEVICE)).sum().item()
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss
+
+            # Atualize o número de previsões corretas e o total
+            _, predicted = torch.max(net(X.to(DEVICE)).data, 1)
+            total += y.size(0)
+            correct += (predicted == y.to(DEVICE)).sum().item()
+
+        epoch_loss /= len(trainloader.dataset)
+        epoch_acc = correct / total  # Calcule a acurácia aqui, dentro do loop externo
+        print(f"Epoch {epoch + 1}: train loss {epoch_loss}, accuracy: {round(float(epoch_acc) * 100, 2)}%")
+
+        losses.append(epoch_loss.item())  # Adicione o valor de perda à lista
+        accuracies.append(epoch_acc)  # Adicione o valor de acurácia à lista
+
+    end_time = time.time()
+
+    # Plotar o gráfico de Loss
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(1, int(len(losses) + 1)), losses, label='Loss', linewidth=2, color='orange')
+    plt.xlabel('Epoch', fontsize=18)
+    plt.ylabel('Loss', fontsize=18)
+    plt.legend()
+    plt.grid(False)  # Desativa as gridlines
+    plt.savefig(str("../results/cic-unb/") + str("joint_datasets_TRAIN_LOSS.pdf"))
+
+    # Plotar o gráfico de Accuracy
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(1, int(len(accuracies) + 1)), accuracies, label='Accuracy', linewidth=2)
+    plt.xlabel('Epoch', fontsize=18)
+    plt.ylabel('Accuracy', fontsize=18)
+    plt.legend()
+    plt.grid(False)  # Desativa as gridlines
+    plt.savefig(str("../results/cic-unb/joint_datasets__TRAIN_ACC.pdf"))
+
+    with open("../results/cic-unb/logs/trainig_time_joint_datasets.txt", 'a') as f:
+    # Agora, quando você usa a função print com o argumento file, a saída será escrita no arquivo
+        print(f"Total Training Time: {end_time - start_time} seconds - dataset_id: " + str(args.dataset_id), file=f)
 
 
 def test(net, testloader):
@@ -273,7 +307,7 @@ def test(net, testloader):
 
 def load_data():
     """Load Custom Dataset."""
-    X_train, X_test, y_train, y_test = load_dataset(args.dataset_id)
+    X_train, X_test, y_train, y_test = load_dataset()
     train_loader, val_loader = create_loaders(X_train, X_test, y_train, y_test)
     return train_loader, val_loader
 
@@ -288,12 +322,17 @@ trainloader, testloader = load_data()
 
 # Training of the model
 
-optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
-for epoch in range(1):
-    train(net, optimizer, trainloader)  # Train the model
-    accuracy = test(net, testloader)  # Evaluate the model
+if str(args.optim) == "Adam":
+    optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
+elif str(args.optim) == "SGD":
+    optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
+elif str(args.optim) == "RMSprop":
+    optimizer = torch.optim.RMSprop(net.parameters(), lr=args.lr, momentum=0.9)
 
-torch.save(net.state_dict(), "../results/cic-unb-models/local_training_dataset_"+str(args.dataset_id)+".pth")
+train(net, optimizer, trainloader)  # Train the model
+accuracy = test(net, testloader)  # Evaluate the model
+
+#torch.save(net.state_dict(), "../results/cic-unb-models/local_training_dataset_"+str(args.dataset_id)+".pth")
 
 
 '''
