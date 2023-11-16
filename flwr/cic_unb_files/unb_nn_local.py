@@ -20,6 +20,7 @@ import torch.optim as optim
 from sklearn.preprocessing import RobustScaler
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+import csv
 
 # #############################################################################
 # 1. Regular PyTorch pipeline: nn.Module, train, test, and DataLoader
@@ -267,6 +268,13 @@ def train(net, optimizer, trainloader):
 
     end_time = time.time()
 
+    data_to_write = list(zip(losses, accuracies))
+    # Escrevendo os dados no arquivo CSV
+    with open("../results/cic-unb/logs/local_training_ACC_LOSS_joint_datasets.txt", 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Loss', 'Accuracy'])  # Escreve o cabeçalho das colunas
+        writer.writerows(data_to_write)  # Escreve os dados das listas em duas colunas separadas por vírgula
+
     # Plotar o gráfico de Loss
     plt.figure(figsize=(10, 5))
     plt.plot(range(1, int(len(losses) + 1)), losses, label='Loss', linewidth=2, color='orange')
@@ -302,6 +310,13 @@ def test(net, testloader):
             loss += criterion(outputs, y).item()
             correct += (torch.max(outputs.data, 1)[1] == y).sum().item()
     accuracy = correct / len(testloader.dataset)
+
+    with open("../results/cic-unb/logs/local_test_ACC_joint_datasets.txt", 'a', newline='') as file:
+        file.write(f"Test Accuracy {accuracy}%\n")
+        #writer = csv.writer(file)
+        #writer.writerow(['Test Accuracy'])  # Escreve o cabeçalho das colunas
+        #writer.writerows(accuracy)  # Escreve os dados das listas em duas colunas separadas por vírgula
+
     return accuracy
 
 
@@ -329,8 +344,10 @@ elif str(args.optim) == "SGD":
 elif str(args.optim) == "RMSprop":
     optimizer = torch.optim.RMSprop(net.parameters(), lr=args.lr, momentum=0.9)
 
-train(net, optimizer, trainloader)  # Train the model
-accuracy = test(net, testloader)  # Evaluate the model
+#Running for 10 times
+for i in range(10):
+    train(net, optimizer, trainloader)  # Train the model
+    accuracy = test(net, testloader)  # Evaluate the model
 
 #torch.save(net.state_dict(), "../results/cic-unb-models/local_training_dataset_"+str(args.dataset_id)+".pth")
 
