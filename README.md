@@ -46,7 +46,7 @@ This project aims to develop an Intrusion Detection System (IDS) leveraging Arti
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your_username/IDS-Network-Slicing.git
+    git clone https://github.com/romoreira/SFI2-Intrusion-Detection-System.git
     ```
 
 2. Install required dependencies:
