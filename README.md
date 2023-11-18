@@ -1,6 +1,3 @@
-# SFI2 Intrusion Detection System
-
-
 # Intrusion Detection System (IDS) based on Artificial Intelligence for Network Slicing Reference Architecture
 
 ## Overview
