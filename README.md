@@ -91,6 +91,10 @@ The hyperparameters have been optimized using Optuna to enhance the system's per
 
 Contributions are welcome! Feel free to fork this repository, make changes, and submit a pull request with your improvements or additional features.
 
+## Financial Support
+
+* [FAPESP](https://fapesp.br/)
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
