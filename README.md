@@ -24,7 +24,8 @@ This project aims to develop an Intrusion Detection System (IDS) leveraging Arti
 1. **Data Collection Module:** Gathers network traffic data within each network slice.
 2. **Preprocessing Unit:** Cleans and preprocesses incoming data for analysis.
 3. **AI Engine:** Utilizes machine learning models to detect anomalies.
-4. **Alerting Mechanism:** Notifies stakeholders in case of detected intrusions.
+   [![](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)]()
+5. **Alerting Mechanism:** Notifies stakeholders in case of detected intrusions.
 
 ### Workflow
 
