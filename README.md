@@ -24,7 +24,6 @@ This project aims to develop an Intrusion Detection System (IDS) leveraging Arti
 1. **Data Collection Module:** Gathers network traffic data within each network slice.
 2. **Preprocessing Unit:** Cleans and preprocesses incoming data for analysis.
 3. **AI Engine:** Utilizes machine learning models to detect anomalies.
-   [![](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)]()
 5. **Alerting Mechanism:** Notifies stakeholders in case of detected intrusions.
 
 ### Workflow
@@ -39,7 +38,7 @@ This project aims to develop an Intrusion Detection System (IDS) leveraging Arti
 ### Requirements
 
 - Python 3.x
-- Machine learning libraries (e.g., TensorFlow, Scikit-learn)
+- Machine learning libraries (e.g., Pytorch, Scikit-learn, Flower)
 - Network slicing framework dependencies
 
 ### Installation
@@ -98,3 +97,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 
 ## Developed by Rodrigo M. [![](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=GitHub%20Pages&logoColor=white)](https://romoreira.github.io)
+![Rodrigo's Github stats](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fromoreira1212%2Fhit-counter)
