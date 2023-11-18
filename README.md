@@ -1,6 +1,6 @@
 # Intrusion Detection System (IDS) based on Artificial Intelligence for Network Slicing Reference Architecture
 
-Developed by Rodrigo M. 
+Developed by Rodrigo M.  <br>
 [![](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=GitHub%20Pages&logoColor=white)](https://romoreira.github.io)
 
 ## Overview :bulb:
