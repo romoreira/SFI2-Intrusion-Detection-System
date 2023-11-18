@@ -7,6 +7,9 @@ Developed by Rodrigo M.  <br>
 
 This project aims to develop an Intrusion Detection System (IDS) leveraging Artificial Intelligence techniques within the context of a Network Slicing Reference Architecture. The system is designed to monitor, analyze, and detect potential intrusions or anomalous activities within distinct network slices.
 
+![DDoS](https://github.com/romoreira/SFI2-Intrusion-Detection-System/blob/20c55f890befe9342e414661df80bb16be3104fe/DDoS.gif)
+
+
 ## Objectives :art:
 
 - Implement machine learning algorithms for anomaly detection within specific network slices.
