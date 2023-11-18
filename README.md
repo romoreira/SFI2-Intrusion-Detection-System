@@ -1,5 +1,7 @@
 # Intrusion Detection System (IDS) based on Artificial Intelligence for Network Slicing Reference Architecture
 
+Developed by Rodrigo M. :arrow_right: [![](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=GitHub%20Pages&logoColor=white)](https://romoreira.github.io)
+
 ## Overview
 
 This project aims to develop an Intrusion Detection System (IDS) leveraging Artificial Intelligence techniques within the context of a Network Slicing Reference Architecture. The system is designed to monitor, analyze, and detect potential intrusions or anomalous activities within distinct network slices.
@@ -85,7 +87,7 @@ Each `round` branch refers to a specific number of interactions between clients 
 
 ### Hyperparameter Optimization
 
-The hyperparameters have been optimized using Optuna to enhance the system's performance.
+The hyperparameters have been optimized using [Optuna](https://optuna.org/) to enhance the system's performance.
 
 ## Contribution
 
@@ -98,6 +100,3 @@ Contributions are welcome! Feel free to fork this repository, make changes, and 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
-
-## Developed by Rodrigo M. :arrow_right: [![](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=GitHub%20Pages&logoColor=white)](https://romoreira.github.io)
