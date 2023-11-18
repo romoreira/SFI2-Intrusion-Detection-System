@@ -96,5 +96,4 @@ Contributions are welcome! Feel free to fork this repository, make changes, and 
 This project is licensed under the [MIT License](LICENSE).
 
 
-## Developed by Rodrigo M. [![](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=GitHub%20Pages&logoColor=white)](https://romoreira.github.io)
-![Rodrigo's Github stats](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fromoreira1212%2Fhit-counter)
+## Developed by Rodrigo M. :arrow_right: [![](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=GitHub%20Pages&logoColor=white)](https://romoreira.github.io)
