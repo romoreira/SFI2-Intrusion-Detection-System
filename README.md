@@ -1,25 +1,26 @@
 # Intrusion Detection System (IDS) based on Artificial Intelligence for Network Slicing Reference Architecture
 
-Developed by Rodrigo M. :arrow_right: [![](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=GitHub%20Pages&logoColor=white)](https://romoreira.github.io)
+Developed by Rodrigo M. 
+[![](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=GitHub%20Pages&logoColor=white)](https://romoreira.github.io)
 
-## Overview
+## Overview :bulb:
 
 This project aims to develop an Intrusion Detection System (IDS) leveraging Artificial Intelligence techniques within the context of a Network Slicing Reference Architecture. The system is designed to monitor, analyze, and detect potential intrusions or anomalous activities within distinct network slices.
 
-## Objectives
+## Objectives :art:
 
 - Implement machine learning algorithms for anomaly detection within specific network slices.
 - Develop a scalable and adaptable IDS framework capable of integrating with diverse network architectures.
 - Provide real-time monitoring and alerts for potential security threats within each network slice.
 
-## Features
+## Features :rotating_light:
 
 - **Machine Learning Models:** Utilize various AI models (e.g., neural networks, decision trees) for anomaly detection.
 - **Network Slice Integration:** Ensure compatibility with different network slicing architectures.
 - **Real-time Monitoring:** Continuous monitoring of network behavior for immediate threat detection.
 - **Alerting System:** Notify administrators or relevant entities upon detection of potential intrusions.
 
-## Architecture
+## Architecture :office:
 
 ### Components
 
@@ -43,7 +44,7 @@ This project aims to develop an Intrusion Detection System (IDS) leveraging Arti
 - Machine learning libraries (e.g., Pytorch, Scikit-learn, Flower)
 - Network slicing framework dependencies
 
-### Installation
+### Installation :computer:
 
 1. Clone the repository:
 
