@@ -65,11 +65,27 @@ This project aims to develop an Intrusion Detection System (IDS) leveraging Arti
     cd IDS-Network-Slicing
     ```
 
-2. Execute the main script:
+2. Execute the main script (run_experiments.sh):
 
     ```bash
-    python main.py
+    ./run_experiments.sh
     ```
+
+### Branches
+
+This repository contains the following branches:
+
+- `local_training`
+- `round_2`
+- `round_4`
+- `round_8`
+- `round_16`
+
+Each `round` branch refers to a specific number of interactions between clients and servers in federated learning.
+
+### Hyperparameter Optimization
+
+The hyperparameters have been optimized using Optuna to enhance the system's performance.
 
 ## Contribution
 
@@ -78,18 +94,3 @@ Contributions are welcome! Feel free to fork this repository, make changes, and 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
-CACM Latim America Experiments.
-
-<to-be-filled>
-
-Conda environment: sif2-ids
-
-Important links:
-https://github.com/westermo/network-traffic-dataset/tree/main
-https://github.com/AlirezaDehlaghi/ICSSIM/
-https://www.sciencedirect.com/science/article/pii/S0166361523000568
-https://www.sciencedirect.com/science/article/pii/S2352340923006121
-
-Pesquisa no Data in Brief.
-https://www.sciencedirect.com/search?pub=Data%20in%20Brief&cid=311593&qs=Software-defined%20Networking
